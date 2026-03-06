@@ -9,9 +9,14 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+mongoose;
+mongoose;
 mongoose
   .connect(
-    "mongodb+srv://mapadmin:soyokaze11@cluster0.up3qgcq.mongodb.net/?appName=Cluster0",
+    "mongodb+srv://mapadmin:soyokaze11@cluster0.up3qgcq.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0",
+    {
+      serverSelectionTimeoutMS: 30000,
+    },
   )
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
