@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://chirashi-setup.onrender.com";
 
 export default function AdminDashboard({ onSaved }) {
   const [ku, setKu] = useState("");

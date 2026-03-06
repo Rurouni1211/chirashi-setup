@@ -3,7 +3,7 @@ import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://chirashi-setup.onrender.com";
 
 export default function UserView({ refreshKey }) {
 
@@ -119,19 +119,23 @@ console.log("SERVER DATA:", data);
 
         try {
 
-          const adminData = propertyMap[name];
+          const res = await fetch(
+            `${API_BASE}/property/${encodeURIComponent(name)}`
+          );
 
-if (!adminData) return;
+          if (!res.ok) return;
 
-setSelectedAreas(prev => ({
-  ...prev,
-  [name]: {
-    desc: adminData.property,
-    price: adminData.price,
-    baseQty: adminData.count,
-    userQty: adminData.count
-  }
-}));
+          const data = await res.json();
+
+          setSelectedAreas(prev => ({
+            ...prev,
+            [name]: {
+              desc: data.property,
+              price: data.price,
+              baseQty: data.count ?? data.units ?? 0,
+userQty: data.count ?? data.units ?? 0,
+            }
+          }));
 
         } catch (err) {
 
@@ -147,7 +151,7 @@ setSelectedAreas(prev => ({
 
   // Update quantity but prevent exceeding admin units
   const updateQty = (area, qty) => {
-console.log("ADMIN DATA", adminData);
+
     const adminMax = selectedAreas[area].baseQty;
 
     if (qty > adminMax) qty = adminMax;

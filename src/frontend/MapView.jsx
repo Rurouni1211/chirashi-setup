@@ -3,7 +3,7 @@ import { GeoJSON, MapContainer, Popup, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://chirashi-setup.onrender.com";
 
 export default function MapView({ refreshKey }) {
   const [geoData, setGeoData] = useState(null);
