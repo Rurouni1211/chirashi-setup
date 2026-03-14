@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -5,19 +7,15 @@ const Property = require("./Models/property");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const mongoUri = process.env.MONGO_URI;
 
 app.use(cors());
 app.use(express.json());
 
-mongoose;
-mongoose;
 mongoose
-  .connect(
-    "mongodb+srv://mapadmin:soyokaze11@cluster0.up3qgcq.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0",
-    {
-      serverSelectionTimeoutMS: 30000,
-    },
-  )
+  .connect(mongoUri, {
+    serverSelectionTimeoutMS: 30000,
+  })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
 
@@ -64,17 +62,22 @@ app.get("/property/:ku", async (req, res) => {
  */
 app.post("/property", async (req, res) => {
   try {
-    const { ku, property, price } = req.body;
+    const { ku, property, price, count } = req.body;
 
-    if (!ku || !property || price === undefined || price === null) {
+    if (!ku || !property || price === undefined || count === undefined) {
       return res
         .status(400)
-        .json({ message: "ku, property, and price are required" });
+        .json({ message: "ku, property, price, and count are required" });
     }
 
     const saved = await Property.findOneAndUpdate(
       { ku },
-      { ku, property, price: Number(price) },
+      {
+        ku,
+        property,
+        price: Number(price),
+        count: Number(count),
+      },
       { new: true, upsert: true, runValidators: true },
     );
 
