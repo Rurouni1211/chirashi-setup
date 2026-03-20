@@ -111,7 +111,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "208"
+        "ku": "魚崎北町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -160,7 +160,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "207"
+        "ku": "魚崎北町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -202,7 +202,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "206"
+        "ku": "魚崎北町六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -234,7 +234,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "205"
+        "ku": "魚崎北町七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -267,7 +267,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "204"
+        "ku": "魚崎北町八丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -307,7 +307,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "203"
+        "ku": "魚崎中町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -383,7 +383,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "201"
+        "ku": "魚崎中町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -419,7 +419,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "200"
+        "ku": "魚崎中町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -468,7 +468,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "199"
+        "ku": "魚崎西町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -519,7 +519,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "198"
+        "ku": "魚崎西町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -564,7 +564,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "197"
+        "ku": "魚崎西町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -607,7 +607,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "196"
+        "ku": "魚崎西町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -657,7 +657,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "195"
+        "ku": "魚崎浜町"
       },
       "geometry": {
         "type": "Polygon",
@@ -710,7 +710,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "194"
+        "ku": "魚崎南町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -757,7 +757,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "193"
+        "ku": "魚崎南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -801,7 +801,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "192"
+        "ku": "魚崎南町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -860,7 +860,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "191"
+        "ku": "魚崎南町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -913,7 +913,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "190"
+        "ku": "魚崎南町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1006,7 +1006,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "188"
+        "ku": "魚崎南町七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1046,7 +1046,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "187"
+        "ku": "魚崎南町八丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1330,7 +1330,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "183"
+        "ku": "青木一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1399,7 +1399,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "182"
+        "ku": "青木二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1438,7 +1438,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "181"
+        "ku": "青木三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1467,7 +1467,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "180"
+        "ku": "青木四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2434,7 +2434,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "164"
+        "ku": "北青木一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2479,7 +2479,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "163"
+        "ku": "北青木二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2533,7 +2533,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "162"
+        "ku": "北青木三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2594,7 +2594,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "161"
+        "ku": "北青木四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2689,7 +2689,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "159"
+        "ku": "甲南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2732,7 +2732,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "158"
+        "ku": "甲南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2774,7 +2774,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "157"
+        "ku": "甲南三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2807,7 +2807,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "156"
+        "ku": "甲南町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2853,7 +2853,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "155"
+        "ku": "甲南町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3441,7 +3441,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "143"
+        "ku": "住吉浜町"
       },
       "geometry": {
         "type": "Polygon",
@@ -3480,7 +3480,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "142"
+        "ku": "住吉東町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3519,7 +3519,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "141"
+        "ku": "住吉東町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3564,7 +3564,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "140"
+        "ku": "住吉東町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3605,7 +3605,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "139"
+        "ku": "住吉東町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3688,7 +3688,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "137"
+        "ku": "住吉南町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3729,7 +3729,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "136"
+        "ku": "住吉南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3771,7 +3771,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "135"
+        "ku": "住吉南三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3819,7 +3819,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "134"
+        "ku": "住吉南町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3856,7 +3856,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "133"
+        "ku": "住吉南町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3893,7 +3893,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "132"
+        "ku": "住吉宮町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3949,7 +3949,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "131"
+        "ku": "住吉宮町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -3991,7 +3991,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "130"
+        "ku": "住吉宮町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4034,7 +4034,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "129"
+        "ku": "住吉宮町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4070,7 +4070,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "128"
+        "ku": "住吉宮町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4109,7 +4109,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "127"
+        "ku": "住吉宮町六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4155,7 +4155,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "126"
+        "ku": "住吉宮町七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4937,7 +4937,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "116"
+        "ku": "田中町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4976,7 +4976,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "115"
+        "ku": "田中町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5016,7 +5016,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "114"
+        "ku": "田中町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5051,7 +5051,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "113"
+        "ku": "田中町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5093,7 +5093,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "112"
+        "ku": "田中町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5514,7 +5514,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "104"
+        "ku": "深江北町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5564,7 +5564,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "103"
+        "ku": "深江北町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5600,7 +5600,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "102"
+        "ku": "深江北町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5639,7 +5639,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "101"
+        "ku": "深江北町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5681,7 +5681,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "100"
+        "ku": "深江北町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5717,7 +5717,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "98"
+        "ku": "深江浜町"
       },
       "geometry": {
         "type": "Polygon",
@@ -5765,7 +5765,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "97"
+        "ku": "深江本町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5804,7 +5804,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "96"
+        "ku": "深江本町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5842,7 +5842,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "95"
+        "ku": "深江本町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5890,7 +5890,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "94"
+        "ku": "深江本町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5925,7 +5925,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "93"
+        "ku": "深江南町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5998,7 +5998,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "92"
+        "ku": "深江南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6052,7 +6052,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "91"
+        "ku": "深江南町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6097,7 +6097,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "90"
+        "ku": "深江南町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6162,7 +6162,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "89"
+        "ku": "深江南町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6208,7 +6208,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "88"
+        "ku": "本庄町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6266,7 +6266,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "87"
+        "ku": "本庄町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6311,7 +6311,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "86"
+        "ku": "本庄町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6344,7 +6344,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "85"
+        "ku": "御影石町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6383,7 +6383,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "84"
+        "ku": "御影石町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6427,7 +6427,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "83"
+        "ku": "御影石町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6467,7 +6467,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "82"
+        "ku": "御影石町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6504,7 +6504,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "81"
+        "ku": "御影塚町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6549,7 +6549,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "80"
+        "ku": " 御影塚町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6603,7 +6603,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "79"
+        "ku": " 御影塚町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6645,7 +6645,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "78"
+        "ku": "御影塚町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6693,7 +6693,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "77"
+        "ku": "御影中町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6742,7 +6742,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "76"
+        "ku": "御影中町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6777,7 +6777,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "75"
+        "ku": "御影中町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6812,7 +6812,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "74"
+        "ku": "御影中町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -6973,7 +6973,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "69"
+        "ku": "御影浜町"
       },
       "geometry": {
         "type": "Polygon",
@@ -7006,7 +7006,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "68"
+        "ku": "御影本町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7042,7 +7042,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "67"
+        "ku": "御影本町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7090,7 +7090,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "66"
+        "ku": "御影本町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7131,7 +7131,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "65"
+        "ku": "御影本町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9590,7 +9590,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "41"
+        "ku": "本山中町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9623,7 +9623,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "40"
+        "ku": "本山中町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9665,7 +9665,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "39"
+        "ku": "本山中町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9701,7 +9701,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "38"
+        "ku": "本山中町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9746,7 +9746,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "37"
+        "ku": "本山南町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9777,7 +9777,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "36"
+        "ku": "本山南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9825,7 +9825,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "35"
+        "ku": "本山南町三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9864,7 +9864,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "34"
+        "ku": "本山南町四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9901,7 +9901,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "33"
+        "ku": "本山南町五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9946,7 +9946,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "32"
+        "ku": "本山南町六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -9977,7 +9977,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "31"
+        "ku": "本山南町七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -10025,7 +10025,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "30"
+        "ku": "本山南町八丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -10082,7 +10082,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "29"
+        "ku": "本山南町九丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -10528,7 +10528,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "21"
+        "ku": "森南町一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -10581,7 +10581,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "20"
+        "ku": "森南町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -10619,7 +10619,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "19"
+        "ku": "森南町三丁目"
       },
       "geometry": {
         "type": "Polygon",
