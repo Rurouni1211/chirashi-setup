@@ -1086,7 +1086,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "186"
+        "ku": "渦森台一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1146,7 +1146,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "185"
+        "ku": "渦森台二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1194,7 +1194,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "185"
+        "ku": "渦森台三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1595,7 +1595,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "177"
+        "ku": "岡本一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1643,7 +1643,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "176"
+        "ku": "岡本二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1687,7 +1687,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "175"
+        "ku": "岡本三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1736,7 +1736,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "174"
+        "ku": "岡本四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1771,7 +1771,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "173"
+        "ku": "岡本五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1827,7 +1827,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "172"
+        "ku": "岡本六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -1924,7 +1924,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "171"
+        "ku": "岡本七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2028,7 +2028,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "170"
+        "ku": "岡本八丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2101,7 +2101,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "169"
+        "ku": "岡本九丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2145,7 +2145,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "168"
+        "ku": "鴨子ヶ原一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2217,7 +2217,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "167"
+        "ku": "鴨子ヶ原二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2308,7 +2308,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "165"
+        "ku": "鴨子ヶ原三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -2644,7 +2644,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "160"
+        "ku": "甲南台"
       },
       "geometry": {
         "type": "Polygon",
@@ -3255,7 +3255,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "144"
+        "ku": "住吉台"
       },
       "geometry": {
         "type": "Polygon",
@@ -4193,7 +4193,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "125"
+        "ku": "住吉山手一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4252,7 +4252,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "124"
+        "ku": "住吉山手二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4311,7 +4311,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "123"
+        "ku": "住吉山手三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4374,7 +4374,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "122"
+        "ku": "住吉山手四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4470,7 +4470,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "121"
+        "ku": "住吉山手五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4553,7 +4553,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "120"
+        "ku": "住吉山手六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4654,7 +4654,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "119"
+        "ku": "住吉山手七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4728,7 +4728,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "118"
+        "ku": "住吉山手八丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -4833,7 +4833,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "117"
+        "ku": "住吉山手九丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5229,7 +5229,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "109"
+        "ku": "西岡本三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5279,7 +5279,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "108"
+        "ku": "西岡本四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5326,7 +5326,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "107"
+        "ku": "西岡本五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5376,7 +5376,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "106"
+        "ku": "西岡本六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -5440,7 +5440,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "105"
+        "ku": "西岡本七丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7333,7 +7333,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "60"
+        "ku": "御影山手一丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7454,7 +7454,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "59"
+        "ku": "御影山手二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7520,7 +7520,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "58"
+        "ku": "御影山手三丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7621,7 +7621,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "57"
+        "ku": "御影山手四丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7687,7 +7687,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "56"
+        "ku": "御影山手五丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -7752,7 +7752,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "55"
+        "ku": "御影山手六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -8082,7 +8082,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "49"
+        "ku": "本山北町六丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -8160,7 +8160,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "住吉台"
+        "ku": "本山町岡本"
       },
       "geometry": {
         "type": "Polygon",
@@ -8498,7 +8498,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "47"
+        "ku": "本山町北畑"
       },
       "geometry": {
         "type": "Polygon",
@@ -8616,7 +8616,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "46"
+        "ku": "本山町田中"
       },
       "geometry": {
         "type": "Polygon",
@@ -8741,7 +8741,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "45"
+        "ku": "本山町田辺"
       },
       "geometry": {
         "type": "Polygon",
@@ -8865,7 +8865,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "44"
+        "ku": "本山町中野"
       },
       "geometry": {
         "type": "Polygon",
