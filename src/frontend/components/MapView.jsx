@@ -39,14 +39,88 @@ function ZoomHandler({ highlight, geoData, geoJsonRef }) {
   return null;
 }
 
+function MapInteractionWatcher({ geoJsonRef, isMapMovingRef }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const closeAllTooltips = () => {
+      const layers = geoJsonRef.current?.getLayers?.() || [];
+      layers.forEach((layer) => {
+        layer.closeTooltip?.();
+      });
+    };
+
+    const handleMoveStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleDragStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleZoomStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleMoveEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleDragEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleZoomEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleMapClick = () => {
+      closeAllTooltips();
+    };
+
+    map.on("movestart", handleMoveStart);
+    map.on("dragstart", handleDragStart);
+    map.on("zoomstart", handleZoomStart);
+    map.on("moveend", handleMoveEnd);
+    map.on("dragend", handleDragEnd);
+    map.on("zoomend", handleZoomEnd);
+    map.on("click", handleMapClick);
+
+    return () => {
+      map.off("movestart", handleMoveStart);
+      map.off("dragstart", handleDragStart);
+      map.off("zoomstart", handleZoomStart);
+      map.off("moveend", handleMoveEnd);
+      map.off("dragend", handleDragEnd);
+      map.off("zoomend", handleZoomEnd);
+      map.off("click", handleMapClick);
+    };
+  }, [map, geoJsonRef, isMapMovingRef]);
+
+  return null;
+}
+
 export default function MapView({ refreshKey, highlight }) {
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});
   const [activeArea, setActiveArea] = useState(highlight || null);
+
   const geoJsonRef = useRef(null);
+  const isMapMovingRef = useRef(false);
 
   useEffect(() => {
-    if (highlight) setActiveArea(highlight);
+    if (highlight) {
+      setActiveArea(highlight);
+    }
   }, [highlight]);
 
   useEffect(() => {
@@ -62,7 +136,10 @@ export default function MapView({ refreshKey, highlight }) {
               geometry: geo,
               properties: {
                 ...geo.properties,
-                name: geo.properties?.name || geo.properties?.S_NAME || `Area ${idx}`,
+                name:
+                  geo.properties?.name ||
+                  geo.properties?.S_NAME ||
+                  `Area ${idx}`,
               },
             })),
           };
@@ -79,6 +156,7 @@ export default function MapView({ refreshKey, highlight }) {
       try {
         const res = await fetch(`${API}/properties`);
         const data = await res.json();
+
         const map = {};
         if (Array.isArray(data)) {
           data.forEach((item) => {
@@ -87,9 +165,10 @@ export default function MapView({ refreshKey, highlight }) {
             }
           });
         }
+
         setPropertyMap(map);
       } catch (err) {
-        console.error(err);
+        console.error("Failed to load properties:", err);
       }
     };
 
@@ -120,6 +199,13 @@ export default function MapView({ refreshKey, highlight }) {
     }
   };
 
+  const closeAllTooltips = () => {
+    const layers = geoJsonRef.current?.getLayers?.() || [];
+    layers.forEach((layer) => {
+      layer.closeTooltip?.();
+    });
+  };
+
   const handleEachFeature = (feature, layer) => {
     const wardName = getWardName(feature);
 
@@ -133,6 +219,10 @@ export default function MapView({ refreshKey, highlight }) {
 
     layer.on({
       mouseover: (e) => {
+        if (isMapMovingRef.current) return;
+
+        closeAllTooltips();
+
         const target = e.target;
 
         target.setStyle({
@@ -150,9 +240,12 @@ export default function MapView({ refreshKey, highlight }) {
 
       mouseout: (e) => {
         const target = e.target;
-
         resetLayerStyle(target);
         target.closeTooltip();
+      },
+
+      mousedown: (e) => {
+        e.target.closeTooltip();
       },
 
       click: (e) => {
@@ -163,7 +256,9 @@ export default function MapView({ refreshKey, highlight }) {
         target.closeTooltip();
 
         const el = target.getElement?.();
-        if (el) el.blur?.();
+        if (el) {
+          el.blur?.();
+        }
       },
     });
   };
@@ -176,6 +271,11 @@ export default function MapView({ refreshKey, highlight }) {
         style={{ height: "650px", width: "100%" }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+        <MapInteractionWatcher
+          geoJsonRef={geoJsonRef}
+          isMapMovingRef={isMapMovingRef}
+        />
 
         <ZoomHandler
           highlight={highlight}

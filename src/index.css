@@ -234,27 +234,23 @@ button:hover {
   margin-top: 10px;
 }
 
-/* 1. Target the Leaflet tooltip container AND your custom class */
 .leaflet-tooltip.ward-tooltip {
   background-color: transparent !important;
   border: none !important;
   box-shadow: none !important;
-  outline: none !important; /* Removes any browser focus borders */
-  color: #0f172a !important; /* Dark text */
+  outline: none !important;
+  color: #0f172a !important;
   font-weight: 800 !important;
   font-size: 14px !important;
   white-space: nowrap !important;
   pointer-events: none !important;
-
-  /* Text shadow is necessary so text is visible over the map */
-  text-shadow: 
-    -1px -1px 0 #fff,  
+  text-shadow:
+    -1px -1px 0 #fff,
      1px -1px 0 #fff,
     -1px  1px 0 #fff,
-     1px  1px 0 #fff; 
+     1px  1px 0 #fff;
 }
 
-/* 2. Hide the arrow triangle that Leaflet attaches to the box */
 .leaflet-tooltip-top.ward-tooltip::before,
 .leaflet-tooltip-bottom.ward-tooltip::before,
 .leaflet-tooltip-left.ward-tooltip::before,
@@ -263,15 +259,7 @@ button:hover {
   border: none !important;
 }
 
-/* Remove focus outline/border from clicked Leaflet shapes */
-.leaflet-container .leaflet-interactive:focus {
-  outline: none !important;
-}
-
+.leaflet-container .leaflet-interactive:focus,
 .leaflet-container svg path:focus {
   outline: none !important;
-}
-
-.leaflet-container svg path {
-  stroke-linejoin: round;
 }
