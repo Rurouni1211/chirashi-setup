@@ -5,23 +5,28 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function MapEditorPanel({ onSaved, initialData }) {
   const [ku, setKu] = useState("");
   const [property, setProperty] = useState("");
+  const [price, setPrice] = useState("");
   const [count, setCount] = useState("");
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("");
-
-  const UNIT_PRICE = 1;
 
   useEffect(() => {
     if (initialData) {
       setKu(initialData.ku || "");
       setProperty(initialData.property || "");
-      setCount(initialData.count || "");
+      setPrice(initialData.price ?? "");
+      setCount(initialData.count ?? "");
     }
   }, [initialData]);
 
   const isValid = useMemo(() => {
-    return ku.trim() !== "" && property.trim() !== "" && count !== "";
-  }, [ku, property, count]);
+    return (
+      ku.trim() !== "" &&
+      property.trim() !== "" &&
+      price !== "" &&
+      count !== ""
+    );
+  }, [ku, property, price, count]);
 
   const loadItems = async () => {
     try {
@@ -48,8 +53,8 @@ export default function MapEditorPanel({ onSaved, initialData }) {
         body: JSON.stringify({
           ku: ku.trim(),
           property: property.trim(),
+          price: Number(price),
           count: Number(count),
-          price: UNIT_PRICE,
         }),
       });
 
@@ -65,6 +70,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
       if (!initialData) {
         setKu("");
         setProperty("");
+        setPrice("");
         setCount("");
       }
 
@@ -129,6 +135,15 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           style={{ padding: "8px" }}
         />
 
+        <label>Price Per Unit</label>
+        <input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="e.g. 100"
+          style={{ padding: "8px" }}
+        />
+
         <label>Total Units</label>
         <input
           type="number"
@@ -157,6 +172,51 @@ export default function MapEditorPanel({ onSaved, initialData }) {
             {status}
           </p>
         )}
+      </div>
+
+      <h3 style={{ marginBottom: "10px" }}>Saved Areas</h3>
+
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        {items.length === 0 && (
+          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
+            No saved areas yet.
+          </p>
+        )}
+
+        {items.map((item) => (
+          <div
+            key={item._id || item.ku}
+            style={{
+              border: "1px solid #e2e8f0",
+              borderRadius: "8px",
+              padding: "10px",
+              background: "#f8fafc",
+            }}
+          >
+            <strong>{item.ku}</strong>
+            <p style={{ margin: "6px 0" }}>{item.property}</p>
+            <p style={{ margin: "6px 0", color: "#475569" }}>
+              Price: ¥{Number(item.price || 0).toLocaleString()}
+            </p>
+            <p style={{ margin: "6px 0", color: "#475569" }}>
+              {item.count} units
+            </p>
+
+            <button
+              onClick={() => handleDelete(item.ku)}
+              style={{
+                background: "#ef4444",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                padding: "6px 10px",
+                cursor: "pointer",
+              }}
+            >
+              Delete
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -8,23 +8,33 @@ const PropertySchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
-
     property: {
       type: String,
       required: true,
       trim: true,
     },
-
     price: {
       type: Number,
       required: true,
-      min: 0,
+      default: 0,
     },
-
     count: {
       type: Number,
       required: true,
-      min: 0,
+      default: 0,
+    },
+
+    // optional future cost fields
+    baseGasFee: {
+      type: Number,
+      default: 0,
+    },
+    baseMinutes: {
+      type: Number,
+      default: 0,
+    },
+    extraMinutesPerUnit: {
+      type: Number,
       default: 0,
     },
   },

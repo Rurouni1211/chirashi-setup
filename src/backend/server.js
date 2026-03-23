@@ -66,7 +66,15 @@ app.get("/property/:ku", async (req, res) => {
 
 app.post("/property", async (req, res) => {
   try {
-    const { ku, property, price, count } = req.body;
+    const {
+      ku,
+      property,
+      price,
+      count,
+      baseGasFee = 0,
+      baseMinutes = 0,
+      extraMinutesPerUnit = 0,
+    } = req.body;
 
     if (!ku || !property || price === undefined || count === undefined) {
       return res
@@ -81,6 +89,9 @@ app.post("/property", async (req, res) => {
         property,
         price: Number(price),
         count: Number(count),
+        baseGasFee: Number(baseGasFee),
+        baseMinutes: Number(baseMinutes),
+        extraMinutesPerUnit: Number(extraMinutesPerUnit),
       },
       { new: true, upsert: true, runValidators: true },
     );
@@ -365,12 +376,10 @@ app.get("/dashboard/summary", async (req, res) => {
 
     res.json(summary);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch dashboard summary",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Failed to fetch dashboard summary",
+      error: err.message,
+    });
   }
 });
 

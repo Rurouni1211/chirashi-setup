@@ -102,8 +102,8 @@ export default function UserView({ refreshKey }) {
           ...prev,
           [name]: {
             desc: adminData.property,
-            price: adminData.price ?? 1,
-            baseQty: adminData.count ?? 0,
+            price: Number(adminData.price ?? 0),
+            baseQty: Number(adminData.count ?? 0),
             userQty: 1,
           },
         }));
@@ -276,6 +276,7 @@ export default function UserView({ refreshKey }) {
             <p style={{ margin: "8px 0" }}>
               <b>Type:</b> {data.desc}
             </p>
+
             <p style={{ margin: "4px 0" }}>
               <b>Unit Price:</b> ¥{Number(data.price).toLocaleString()}
             </p>
@@ -327,6 +328,7 @@ export default function UserView({ refreshKey }) {
             <div style={{ marginBottom: "8px" }}>
               <b>Total Units:</b> {totalUnits.toLocaleString()}
             </div>
+
             <div
               style={{
                 display: "flex",
