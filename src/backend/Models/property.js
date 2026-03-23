@@ -23,20 +23,6 @@ const PropertySchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
-
-    // optional future cost fields
-    baseGasFee: {
-      type: Number,
-      default: 0,
-    },
-    baseMinutes: {
-      type: Number,
-      default: 0,
-    },
-    extraMinutesPerUnit: {
-      type: Number,
-      default: 0,
-    },
   },
   { timestamps: true },
 );

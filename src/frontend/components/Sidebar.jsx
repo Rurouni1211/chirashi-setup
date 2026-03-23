@@ -33,19 +33,22 @@ export default function Sidebar() {
           Dashboard
         </Link>
 
+        <Link to="/admin/orders" style={linkStyle("/admin/orders")}>
+          Orders
+        </Link>
+
         <Link to="/admin/areas" style={linkStyle("/admin/areas")}>
           Distribution Areas
         </Link>
 
-         <Link to="/admin/settings" style={linkStyle("/admin/settings")}>
+        <Link to="/admin/settings" style={linkStyle("/admin/settings")}>
           Settings
         </Link>
-
+        
         <Link to="/admin/add" style={linkStyle("/admin/add")}>
           + Add New Area
         </Link>
 
-       
       </div>
     </div>
   );

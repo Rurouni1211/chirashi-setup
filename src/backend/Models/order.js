@@ -29,7 +29,15 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    gasFee: {
+    fuelPricePerLitre: {
+      type: Number,
+      default: 0,
+    },
+    fuelUsedPerDelivery: {
+      type: Number,
+      default: 0,
+    },
+    fuelCost: {
       type: Number,
       default: 0,
     },

@@ -66,15 +66,7 @@ app.get("/property/:ku", async (req, res) => {
 
 app.post("/property", async (req, res) => {
   try {
-    const {
-      ku,
-      property,
-      price,
-      count,
-      baseGasFee = 0,
-      baseMinutes = 0,
-      extraMinutesPerUnit = 0,
-    } = req.body;
+    const { ku, property, price, count } = req.body;
 
     if (!ku || !property || price === undefined || count === undefined) {
       return res
@@ -89,9 +81,6 @@ app.post("/property", async (req, res) => {
         property,
         price: Number(price),
         count: Number(count),
-        baseGasFee: Number(baseGasFee),
-        baseMinutes: Number(baseMinutes),
-        extraMinutesPerUnit: Number(extraMinutesPerUnit),
       },
       { new: true, upsert: true, runValidators: true },
     );
@@ -128,7 +117,8 @@ app.get("/settings", async (req, res) => {
 
     if (!settings) {
       settings = await Settings.create({
-        gasFee: 0,
+        fuelPricePerLitre: 0,
+        fuelUsedPerDelivery: 0,
         hourlyRate: 1000,
         avgMinutesNeeded: 60,
       });
@@ -144,7 +134,12 @@ app.get("/settings", async (req, res) => {
 
 app.post("/settings", async (req, res) => {
   try {
-    const { gasFee, hourlyRate, avgMinutesNeeded } = req.body;
+    const {
+      fuelPricePerLitre,
+      fuelUsedPerDelivery,
+      hourlyRate,
+      avgMinutesNeeded,
+    } = req.body;
 
     let settings = await Settings.findOne();
 
@@ -152,7 +147,8 @@ app.post("/settings", async (req, res) => {
       settings = new Settings();
     }
 
-    settings.gasFee = Number(gasFee || 0);
+    settings.fuelPricePerLitre = Number(fuelPricePerLitre || 0);
+    settings.fuelUsedPerDelivery = Number(fuelUsedPerDelivery || 0);
     settings.hourlyRate = Number(hourlyRate || 0);
     settings.avgMinutesNeeded = Number(avgMinutesNeeded || 0);
 
@@ -184,7 +180,8 @@ app.post("/orders", async (req, res) => {
 
     if (!settings) {
       settings = await Settings.create({
-        gasFee: 0,
+        fuelPricePerLitre: 0,
+        fuelUsedPerDelivery: 0,
         hourlyRate: 1000,
         avgMinutesNeeded: 60,
       });
@@ -208,13 +205,15 @@ app.post("/orders", async (req, res) => {
       0,
     );
 
-    const safeGasFee = Number(settings.gasFee || 0);
-    const safeAvgMinutesNeeded = Number(settings.avgMinutesNeeded || 0);
-    const safeHourlyRate = Number(settings.hourlyRate || 0);
+    const fuelPricePerLitre = Number(settings.fuelPricePerLitre || 0);
+    const fuelUsedPerDelivery = Number(settings.fuelUsedPerDelivery || 0);
+    const hourlyRate = Number(settings.hourlyRate || 0);
+    const avgMinutesNeeded = Number(settings.avgMinutesNeeded || 0);
 
-    const laborHours = safeAvgMinutesNeeded / 60;
-    const laborCost = laborHours * safeHourlyRate;
-    const investmentAmount = safeGasFee + laborCost;
+    const fuelCost = fuelPricePerLitre * fuelUsedPerDelivery;
+    const laborHours = avgMinutesNeeded / 60;
+    const laborCost = laborHours * hourlyRate;
+    const investmentAmount = fuelCost + laborCost;
     const profit = salesAmount - investmentAmount;
 
     const savedOrder = await Order.create({
@@ -222,10 +221,12 @@ app.post("/orders", async (req, res) => {
       items: normalizedItems,
       totalUnits,
       salesAmount,
-      gasFee: safeGasFee,
-      avgMinutesNeeded: safeAvgMinutesNeeded,
+      fuelPricePerLitre,
+      fuelUsedPerDelivery,
+      fuelCost,
+      avgMinutesNeeded,
       laborHours,
-      hourlyRate: safeHourlyRate,
+      hourlyRate,
       laborCost,
       investmentAmount,
       profit,
@@ -241,12 +242,53 @@ app.post("/orders", async (req, res) => {
 
 app.get("/orders", async (req, res) => {
   try {
-    const orders = await Order.find().sort({ orderDate: -1 });
+    const { date = "", area = "", sort = "latest" } = req.query;
+
+    let orders = await Order.find().sort({ orderDate: -1 });
+
+    if (date) {
+      const targetDate = new Date(date);
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      orders = orders.filter((order) => {
+        const d = new Date(order.orderDate);
+        return d >= targetDate && d < nextDate;
+      });
+    }
+
+    if (area.trim()) {
+      const areaLower = area.trim().toLowerCase();
+
+      orders = orders.filter((order) =>
+        (order.items || []).some((item) =>
+          String(item.area || "")
+            .toLowerCase()
+            .includes(areaLower),
+        ),
+      );
+    }
+
+    if (sort === "highest") {
+      orders.sort(
+        (a, b) => Number(b.salesAmount || 0) - Number(a.salesAmount || 0),
+      );
+    } else if (sort === "lowest") {
+      orders.sort(
+        (a, b) => Number(a.salesAmount || 0) - Number(b.salesAmount || 0),
+      );
+    } else if (sort === "oldest") {
+      orders.sort((a, b) => new Date(a.orderDate) - new Date(b.orderDate));
+    } else {
+      orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+    }
+
     res.json(orders);
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch orders", error: err.message });
+    res.status(500).json({
+      message: "Failed to fetch orders",
+      error: err.message,
+    });
   }
 });
 
@@ -258,7 +300,7 @@ app.get("/dashboard/summary", async (req, res) => {
       totalOrders: 0,
       totalUnits: 0,
       totalRevenue: 0,
-      totalGasFee: 0,
+      totalFuelCost: 0,
       totalLaborCost: 0,
       totalInvestment: 0,
       totalProfit: 0,
@@ -272,7 +314,7 @@ app.get("/dashboard/summary", async (req, res) => {
 
     if (!orders.length) {
       summary.costBreakdown = [
-        { name: "Gas", value: 0 },
+        { name: "Fuel", value: 0 },
         { name: "Labor", value: 0 },
         { name: "Profit", value: 0 },
       ];
@@ -290,7 +332,7 @@ app.get("/dashboard/summary", async (req, res) => {
     for (const order of orders) {
       summary.totalUnits += Number(order.totalUnits || 0);
       summary.totalRevenue += Number(order.salesAmount || 0);
-      summary.totalGasFee += Number(order.gasFee || 0);
+      summary.totalFuelCost += Number(order.fuelCost || 0);
       summary.totalLaborCost += Number(order.laborCost || 0);
       summary.totalInvestment += Number(order.investmentAmount || 0);
       summary.totalProfit += Number(order.profit || 0);
@@ -357,7 +399,7 @@ app.get("/dashboard/summary", async (req, res) => {
     );
 
     summary.costBreakdown = [
-      { name: "Gas", value: summary.totalGasFee },
+      { name: "Fuel", value: summary.totalFuelCost },
       { name: "Labor", value: summary.totalLaborCost },
       { name: "Profit", value: Math.max(summary.totalProfit, 0) },
     ];

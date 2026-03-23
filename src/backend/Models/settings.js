@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const SettingsSchema = new mongoose.Schema(
   {
-    gasFee: {
+    fuelPricePerLitre: {
+      type: Number,
+      default: 0,
+    },
+    fuelUsedPerDelivery: {
       type: Number,
       default: 0,
     },

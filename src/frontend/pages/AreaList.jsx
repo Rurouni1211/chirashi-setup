@@ -60,11 +60,13 @@ export default function AreasList() {
               borderRadius: "8px",
             }}
           >
-            <strong>{a.ku}</strong>
+            <strong>Name : {a.ku}</strong>
 
-            <p>{a.property}</p>
+            <p>Property Description : {a.property}</p>
 
-            <p>{a.count} units</p>
+            <p>Price : {a.price}</p>
+
+            <p>Property Count : {a.count} units</p>
 
             <button onClick={() => navigate(`/admin/show/${a.ku}`)}>
               Show

@@ -25,7 +25,9 @@ function StatCard({ title, value, color = "#0f172a" }) {
 function SimpleBarChart({ data }) {
   const maxValue = useMemo(() => {
     if (!data.length) return 1;
-    return Math.max(...data.map((d) => Math.max(d.revenue, d.investment, Math.max(d.profit, 0), d.orders)));
+    return Math.max(
+      ...data.map((d) => Math.max(d.revenue, d.investment, Math.max(d.profit, 0), d.orders))
+    );
   }, [data]);
 
   return (
@@ -167,13 +169,7 @@ function PieChart({ data }) {
               return circle;
             })}
           </g>
-          <text
-            x="90"
-            y="86"
-            textAnchor="middle"
-            fontSize="14"
-            fill="#64748b"
-          >
+          <text x="90" y="86" textAnchor="middle" fontSize="14" fill="#64748b">
             Total
           </text>
           <text
@@ -278,7 +274,7 @@ export default function DashboardPage() {
               <StatCard title="Total Units" value={summary.totalUnits.toLocaleString()} />
               <StatCard title="Avg Minutes / Order" value={summary.avgMinutesPerOrder.toFixed(1)} />
               <StatCard title="Revenue / Hour" value={`¥${summary.avgRevenuePerHour.toFixed(0)}`} />
-              <StatCard title="Gas Total" value={`¥${summary.totalGasFee.toLocaleString()}`} />
+              <StatCard title="Fuel Total" value={`¥${summary.totalFuelCost.toLocaleString()}`} />
             </div>
 
             <div
