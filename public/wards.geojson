@@ -40,7 +40,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "210"
+        "ku": "魚崎北町二丁目"
       },
       "geometry": {
         "type": "Polygon",
@@ -77,7 +77,7 @@
     {
       "type": "Feature",
       "properties": {
-        "ku": "209"
+        "ku": "魚崎北町三丁目"
       },
       "geometry": {
         "type": "Polygon",
