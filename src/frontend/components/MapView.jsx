@@ -18,7 +18,7 @@ function ZoomHandler({ highlight, geoData, geoJsonRef }) {
 
       const targetLayer = layers.find((layer) => {
         const p = layer.feature?.properties || {};
-        const name = p.ku || p.name || p.S_NAME || p.N03_004;
+        const name = p.ku || p.name || p.S_NAME || p.N03_004 || p.MOJI;
         return name === highlight;
       });
 
@@ -139,6 +139,7 @@ export default function MapView({ refreshKey, highlight }) {
                 name:
                   geo.properties?.name ||
                   geo.properties?.S_NAME ||
+                  geo.properties?.MOJI ||
                   `Area ${idx}`,
               },
             })),
@@ -161,7 +162,7 @@ export default function MapView({ refreshKey, highlight }) {
         if (Array.isArray(data)) {
           data.forEach((item) => {
             if (item?.ku) {
-              map[item.ku] = item;
+              map[item.ku.trim()] = item;
             }
           });
         }
@@ -177,7 +178,7 @@ export default function MapView({ refreshKey, highlight }) {
 
   const getWardName = (feature) => {
     const p = feature?.properties || {};
-    return p.ku || p.name || p.S_NAME || p.N03_004 || "Unknown";
+    return (p.ku || p.name || p.S_NAME || p.N03_004 || p.MOJI || "Unknown").trim();
   };
 
   const styleFeature = (feature) => {
@@ -187,9 +188,9 @@ export default function MapView({ refreshKey, highlight }) {
 
     return {
       color: isHighlighted ? "#be185d" : "#475569",
-      weight: isHighlighted ? 1.5 : 1,
+      weight: isHighlighted ? 3 : 1,
       fillColor: isHighlighted ? "#f472b6" : hasData ? "#86efac" : "#cbd5e1",
-      fillOpacity: isHighlighted ? 0.8 : 0.6,
+      fillOpacity: isHighlighted ? 0.85 : 0.6,
     };
   };
 
@@ -226,9 +227,9 @@ export default function MapView({ refreshKey, highlight }) {
         const target = e.target;
 
         target.setStyle({
-          weight: 1.5,
-          color: "#0f172a",
-          fillOpacity: 0.85,
+          weight: wardName === activeArea ? 3 : 1.5,
+          color: wardName === activeArea ? "#be185d" : "#0f172a",
+          fillOpacity: wardName === activeArea ? 0.85 : 0.85,
         });
 
         if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
@@ -250,9 +251,28 @@ export default function MapView({ refreshKey, highlight }) {
 
       click: (e) => {
         L.DomEvent.stopPropagation(e);
-        setActiveArea(wardName);
 
         const target = e.target;
+        closeAllTooltips();
+
+        setActiveArea(wardName);
+
+        const layers = geoJsonRef.current?.getLayers?.() || [];
+        layers.forEach((l) => {
+          resetLayerStyle(l);
+        });
+
+        target.setStyle({
+          color: "#be185d",
+          weight: 3,
+          fillColor: "#f472b6",
+          fillOpacity: 0.85,
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          target.bringToFront();
+        }
+
         target.closeTooltip();
 
         const el = target.getElement?.();
@@ -285,6 +305,7 @@ export default function MapView({ refreshKey, highlight }) {
 
         {geoData && (
           <GeoJSON
+            key={`geojson-${activeArea || "none"}-${refreshKey || 0}`}
             data={geoData}
             style={styleFeature}
             onEachFeature={handleEachFeature}

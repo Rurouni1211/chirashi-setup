@@ -90,7 +90,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
         </button>
         {status && <p style={{ fontSize: "0.8rem", color: "blue" }}>{status}</p>}
       </div>
-      {/* ... rest of the list rendering ... */}
+      
     </div>
   );
 }
