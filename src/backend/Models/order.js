@@ -1,58 +1,64 @@
-import { Link, useLocation } from "react-router-dom";
+const mongoose = require("mongoose");
 
-export default function Sidebar() {
-  const location = useLocation();
+const OrderItemSchema = new mongoose.Schema(
+  {
+    area: { type: String, required: true },
+    desc: { type: String, default: "" },
+    unitPrice: { type: Number, required: true, default: 0 },
+    qty: { type: Number, required: true, default: 1 },
+    subtotal: { type: Number, required: true, default: 0 },
+  },
+  { _id: false },
+);
 
-  return (
-    <div
-      style={{
-        width: "220px",
-        background: "#0f172a",
-        color: "white",
-        padding: "20px",
-        height: "100vh",
-        position: "sticky",
-        top: 0,
-      }}
-    >
-      <h2>Admin Panel</h2>
+const OrderSchema = new mongoose.Schema(
+  {
+    orderDate: {
+      type: Date,
+      default: Date.now,
+    },
+    items: {
+      type: [OrderItemSchema],
+      default: [],
+    },
+    totalUnits: {
+      type: Number,
+      default: 0,
+    },
+    salesAmount: {
+      type: Number,
+      default: 0,
+    },
+    gasFee: {
+      type: Number,
+      default: 0,
+    },
+    avgMinutesNeeded: {
+      type: Number,
+      default: 0,
+    },
+    laborHours: {
+      type: Number,
+      default: 0,
+    },
+    hourlyRate: {
+      type: Number,
+      default: 0,
+    },
+    laborCost: {
+      type: Number,
+      default: 0,
+    },
+    investmentAmount: {
+      type: Number,
+      default: 0,
+    },
+    profit: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true },
+);
 
-      <div style={{ marginTop: "20px" }}>
-        <Link
-          to="/admin/areas"
-          style={{
-            display: "block",
-            marginBottom: "12px",
-            color: "white",
-            textDecoration: "none",
-            fontWeight:
-              location.pathname === "/admin/areas" ? "bold" : "normal",
-            background:
-              location.pathname === "/admin/areas" ? "#334155" : "transparent",
-            padding: "8px 10px",
-            borderRadius: "6px",
-          }}
-        >
-          Distribution Areas
-        </Link>
-
-        <Link
-          to="/admin/add"
-          style={{
-            display: "block",
-            marginBottom: "12px",
-            color: "white",
-            textDecoration: "none",
-            fontWeight: location.pathname === "/admin/add" ? "bold" : "normal",
-            background:
-              location.pathname === "/admin/add" ? "#334155" : "transparent",
-            padding: "8px 10px",
-            borderRadius: "6px",
-          }}
-        >
-          + Add New Area
-        </Link>
-      </div>
-    </div>
-  );
-}
+module.exports = mongoose.model("Order", OrderSchema);
