@@ -8,6 +8,7 @@ export default function SettingsPage() {
   const [fuelUsedPerDelivery, setFuelUsedPerDelivery] = useState("");
   const [hourlyRate, setHourlyRate] = useState("");
   const [avgMinutesNeeded, setAvgMinutesNeeded] = useState("");
+  const [marginPercent, setMarginPercent] = useState("");
   const [savedSettings, setSavedSettings] = useState(null);
   const [status, setStatus] = useState("Loading settings...");
 
@@ -34,6 +35,7 @@ export default function SettingsPage() {
       setFuelUsedPerDelivery(String(data.fuelUsedPerDelivery ?? 0));
       setHourlyRate(String(data.hourlyRate ?? 1000));
       setAvgMinutesNeeded(String(data.avgMinutesNeeded ?? 60));
+      setMarginPercent(String(data.marginPercent ?? 20));
       setSavedSettings(data);
       setStatus("");
     } catch (err) {
@@ -53,6 +55,7 @@ export default function SettingsPage() {
         fuelUsedPerDelivery: Number(fuelUsedPerDelivery || 0),
         hourlyRate: Number(hourlyRate || 0),
         avgMinutesNeeded: Number(avgMinutesNeeded || 0),
+        marginPercent: Number(marginPercent || 0),
       };
 
       const res = await fetch(`${API}/settings`, {
@@ -84,6 +87,7 @@ export default function SettingsPage() {
       setFuelUsedPerDelivery(String(data.fuelUsedPerDelivery ?? 0));
       setHourlyRate(String(data.hourlyRate ?? 1000));
       setAvgMinutesNeeded(String(data.avgMinutesNeeded ?? 60));
+      setMarginPercent(String(data.marginPercent ?? 20));
       setStatus("Settings saved successfully");
     } catch (err) {
       console.error("Save settings error:", err);
@@ -168,6 +172,22 @@ export default function SettingsPage() {
             style={{
               width: "100%",
               padding: "10px",
+              marginBottom: "16px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "8px",
+            }}
+          />
+
+          <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+            Margin Percent
+          </label>
+          <input
+            type="number"
+            value={marginPercent}
+            onChange={(e) => setMarginPercent(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "10px",
               marginBottom: "20px",
               border: "1px solid #cbd5e1",
               borderRadius: "8px",
@@ -227,6 +247,10 @@ export default function SettingsPage() {
               <p>
                 <b>Average Minutes Needed:</b>{" "}
                 {Number(savedSettings.avgMinutesNeeded || 0).toLocaleString()} minutes
+              </p>
+              <p>
+                <b>Margin Percent:</b>{" "}
+                {Number(savedSettings.marginPercent || 0).toLocaleString()}%
               </p>
               {savedSettings.updatedAt && (
                 <p style={{ color: "#64748b", fontSize: "0.9rem" }}>

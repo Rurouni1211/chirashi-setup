@@ -18,6 +18,10 @@ const SettingsSchema = new mongoose.Schema(
       type: Number,
       default: 60,
     },
+    marginPercent: {
+      type: Number,
+      default: 20,
+    },
   },
   { timestamps: true },
 );

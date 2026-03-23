@@ -5,7 +5,6 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function MapEditorPanel({ onSaved, initialData }) {
   const [ku, setKu] = useState("");
   const [property, setProperty] = useState("");
-  const [price, setPrice] = useState("");
   const [count, setCount] = useState("");
   const [items, setItems] = useState([]);
   const [status, setStatus] = useState("");
@@ -14,19 +13,13 @@ export default function MapEditorPanel({ onSaved, initialData }) {
     if (initialData) {
       setKu(initialData.ku || "");
       setProperty(initialData.property || "");
-      setPrice(initialData.price ?? "");
       setCount(initialData.count ?? "");
     }
   }, [initialData]);
 
   const isValid = useMemo(() => {
-    return (
-      ku.trim() !== "" &&
-      property.trim() !== "" &&
-      price !== "" &&
-      count !== ""
-    );
-  }, [ku, property, price, count]);
+    return ku.trim() !== "" && property.trim() !== "" && count !== "";
+  }, [ku, property, count]);
 
   const loadItems = async () => {
     try {
@@ -53,7 +46,6 @@ export default function MapEditorPanel({ onSaved, initialData }) {
         body: JSON.stringify({
           ku: ku.trim(),
           property: property.trim(),
-          price: Number(price),
           count: Number(count),
         }),
       });
@@ -70,7 +62,6 @@ export default function MapEditorPanel({ onSaved, initialData }) {
       if (!initialData) {
         setKu("");
         setProperty("");
-        setPrice("");
         setCount("");
       }
 
@@ -135,15 +126,6 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           style={{ padding: "8px" }}
         />
 
-        <label>Price Per Unit</label>
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="e.g. 100"
-          style={{ padding: "8px" }}
-        />
-
         <label>Total Units</label>
         <input
           type="number"
@@ -196,10 +178,10 @@ export default function MapEditorPanel({ onSaved, initialData }) {
             <strong>{item.ku}</strong>
             <p style={{ margin: "6px 0" }}>{item.property}</p>
             <p style={{ margin: "6px 0", color: "#475569" }}>
-              Price: ¥{Number(item.price || 0).toLocaleString()}
+              Calculated Price: ¥{Number(item.calculatedPrice || 0).toLocaleString()}
             </p>
             <p style={{ margin: "6px 0", color: "#475569" }}>
-              {item.count} units
+              {Number(item.count || 0).toLocaleString()} units
             </p>
 
             <button

@@ -30,6 +30,43 @@ app.get("/", (req, res) => {
   res.send("Property Map API running");
 });
 
+const calculateUnitPrice = (settings, count) => {
+  const safeCount = Number(count || 0);
+  if (safeCount <= 0) return 0;
+
+  const fuelPricePerLitre = Number(settings?.fuelPricePerLitre || 0);
+  const fuelUsedPerDelivery = Number(settings?.fuelUsedPerDelivery || 0);
+  const hourlyRate = Number(settings?.hourlyRate || 0);
+  const avgMinutesNeeded = Number(settings?.avgMinutesNeeded || 0);
+  const marginPercent = Number(settings?.marginPercent || 0);
+
+  const fuelCost = fuelPricePerLitre * fuelUsedPerDelivery;
+  const laborHours = avgMinutesNeeded / 60;
+  const laborCost = laborHours * hourlyRate;
+  const baseCostPerDelivery = fuelCost + laborCost;
+
+  const rawUnitPrice =
+    (baseCostPerDelivery / safeCount) * (1 + marginPercent / 100);
+
+  return Math.ceil(rawUnitPrice);
+};
+
+const getOrCreateSettings = async () => {
+  let settings = await Settings.findOne();
+
+  if (!settings) {
+    settings = await Settings.create({
+      fuelPricePerLitre: 0,
+      fuelUsedPerDelivery: 0,
+      hourlyRate: 1000,
+      avgMinutesNeeded: 60,
+      marginPercent: 20,
+    });
+  }
+
+  return settings;
+};
+
 /**
  * =========================
  * PROPERTY ROUTES
@@ -39,7 +76,19 @@ app.get("/", (req, res) => {
 app.get("/properties", async (req, res) => {
   try {
     const items = await Property.find().sort({ ku: 1 });
-    res.json(items);
+    const settings = await getOrCreateSettings();
+
+    const enriched = items.map((item) => {
+      const count = Number(item.count || 0);
+      const calculatedPrice = calculateUnitPrice(settings, count);
+
+      return {
+        ...item.toObject(),
+        calculatedPrice,
+      };
+    });
+
+    res.json(enriched);
   } catch (err) {
     res
       .status(500)
@@ -56,7 +105,16 @@ app.get("/property/:ku", async (req, res) => {
       return res.status(404).json({ message: `No data found for ${ku}` });
     }
 
-    res.json(item);
+    const settings = await getOrCreateSettings();
+    const calculatedPrice = calculateUnitPrice(
+      settings,
+      Number(item.count || 0),
+    );
+
+    res.json({
+      ...item.toObject(),
+      calculatedPrice,
+    });
   } catch (err) {
     res
       .status(500)
@@ -66,12 +124,12 @@ app.get("/property/:ku", async (req, res) => {
 
 app.post("/property", async (req, res) => {
   try {
-    const { ku, property, price, count } = req.body;
+    const { ku, property, count } = req.body;
 
-    if (!ku || !property || price === undefined || count === undefined) {
+    if (!ku || !property || count === undefined) {
       return res
         .status(400)
-        .json({ message: "ku, property, price, and count are required" });
+        .json({ message: "ku, property, and count are required" });
     }
 
     const saved = await Property.findOneAndUpdate(
@@ -79,13 +137,21 @@ app.post("/property", async (req, res) => {
       {
         ku,
         property,
-        price: Number(price),
         count: Number(count),
       },
       { new: true, upsert: true, runValidators: true },
     );
 
-    res.json(saved);
+    const settings = await getOrCreateSettings();
+    const calculatedPrice = calculateUnitPrice(
+      settings,
+      Number(saved.count || 0),
+    );
+
+    res.json({
+      ...saved.toObject(),
+      calculatedPrice,
+    });
   } catch (err) {
     res
       .status(500)
@@ -113,17 +179,7 @@ app.delete("/property/:ku", async (req, res) => {
 
 app.get("/settings", async (req, res) => {
   try {
-    let settings = await Settings.findOne();
-
-    if (!settings) {
-      settings = await Settings.create({
-        fuelPricePerLitre: 0,
-        fuelUsedPerDelivery: 0,
-        hourlyRate: 1000,
-        avgMinutesNeeded: 60,
-      });
-    }
-
+    const settings = await getOrCreateSettings();
     res.json(settings);
   } catch (err) {
     res
@@ -139,6 +195,7 @@ app.post("/settings", async (req, res) => {
       fuelUsedPerDelivery,
       hourlyRate,
       avgMinutesNeeded,
+      marginPercent,
     } = req.body;
 
     let settings = await Settings.findOne();
@@ -151,6 +208,7 @@ app.post("/settings", async (req, res) => {
     settings.fuelUsedPerDelivery = Number(fuelUsedPerDelivery || 0);
     settings.hourlyRate = Number(hourlyRate || 0);
     settings.avgMinutesNeeded = Number(avgMinutesNeeded || 0);
+    settings.marginPercent = Number(marginPercent || 0);
 
     await settings.save();
 
@@ -176,16 +234,18 @@ app.post("/orders", async (req, res) => {
       return res.status(400).json({ message: "Order items are required" });
     }
 
-    let settings = await Settings.findOne();
+    const settings = await getOrCreateSettings();
 
-    if (!settings) {
-      settings = await Settings.create({
-        fuelPricePerLitre: 0,
-        fuelUsedPerDelivery: 0,
-        hourlyRate: 1000,
-        avgMinutesNeeded: 60,
-      });
-    }
+    const fuelPricePerLitre = Number(settings.fuelPricePerLitre || 0);
+    const fuelUsedPerDelivery = Number(settings.fuelUsedPerDelivery || 0);
+    const hourlyRate = Number(settings.hourlyRate || 0);
+    const avgMinutesNeeded = Number(settings.avgMinutesNeeded || 0);
+    const marginPercent = Number(settings.marginPercent || 0);
+
+    const fuelCost = fuelPricePerLitre * fuelUsedPerDelivery;
+    const laborHours = avgMinutesNeeded / 60;
+    const laborCost = laborHours * hourlyRate;
+    const baseCostPerDelivery = fuelCost + laborCost;
 
     const normalizedItems = items.map((item) => {
       const unitPrice = Number(item.unitPrice || 0);
@@ -205,14 +265,6 @@ app.post("/orders", async (req, res) => {
       0,
     );
 
-    const fuelPricePerLitre = Number(settings.fuelPricePerLitre || 0);
-    const fuelUsedPerDelivery = Number(settings.fuelUsedPerDelivery || 0);
-    const hourlyRate = Number(settings.hourlyRate || 0);
-    const avgMinutesNeeded = Number(settings.avgMinutesNeeded || 0);
-
-    const fuelCost = fuelPricePerLitre * fuelUsedPerDelivery;
-    const laborHours = avgMinutesNeeded / 60;
-    const laborCost = laborHours * hourlyRate;
     const investmentAmount = fuelCost + laborCost;
     const profit = salesAmount - investmentAmount;
 
@@ -228,6 +280,8 @@ app.post("/orders", async (req, res) => {
       laborHours,
       hourlyRate,
       laborCost,
+      marginPercent,
+      baseCostPerDelivery,
       investmentAmount,
       profit,
     });
@@ -418,10 +472,12 @@ app.get("/dashboard/summary", async (req, res) => {
 
     res.json(summary);
   } catch (err) {
-    res.status(500).json({
-      message: "Failed to fetch dashboard summary",
-      error: err.message,
-    });
+    res
+      .status(500)
+      .json({
+        message: "Failed to fetch dashboard summary",
+        error: err.message,
+      });
   }
 });
 

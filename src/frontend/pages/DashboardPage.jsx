@@ -22,13 +22,22 @@ function StatCard({ title, value, color = "#0f172a" }) {
   );
 }
 
-function SimpleBarChart({ data }) {
+function SimpleBarChart({ data = [] }) {
+  const safeData = Array.isArray(data) ? data : [];
+
   const maxValue = useMemo(() => {
-    if (!data.length) return 1;
+    if (!safeData.length) return 1;
     return Math.max(
-      ...data.map((d) => Math.max(d.revenue, d.investment, Math.max(d.profit, 0), d.orders))
+      ...safeData.map((d) =>
+        Math.max(
+          Number(d?.revenue || 0),
+          Number(d?.investment || 0),
+          Math.max(Number(d?.profit || 0), 0),
+          Number(d?.orders || 0)
+        )
+      )
     );
-  }, [data]);
+  }, [safeData]);
 
   return (
     <div
@@ -52,60 +61,69 @@ function SimpleBarChart({ data }) {
           paddingTop: "20px",
         }}
       >
-        {data.map((item) => (
-          <div
-            key={item.month}
-            style={{
-              minWidth: "90px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+        {safeData.map((item) => {
+          const revenue = Number(item?.revenue || 0);
+          const investment = Number(item?.investment || 0);
+          const profit = Math.max(Number(item?.profit || 0), 0);
+          const orders = Number(item?.orders || 0);
+
+          return (
             <div
+              key={item?.month || Math.random()}
               style={{
+                minWidth: "90px",
                 display: "flex",
-                gap: "6px",
-                alignItems: "flex-end",
-                height: "220px",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "8px",
               }}
             >
               <div
-                title={`Revenue: ¥${item.revenue.toLocaleString()}`}
                 style={{
-                  width: "18px",
-                  height: `${(item.revenue / maxValue) * 200}px`,
-                  background: "#3b82f6",
-                  borderRadius: "6px 6px 0 0",
+                  display: "flex",
+                  gap: "6px",
+                  alignItems: "flex-end",
+                  height: "220px",
                 }}
-              />
-              <div
-                title={`Investment: ¥${item.investment.toLocaleString()}`}
-                style={{
-                  width: "18px",
-                  height: `${(item.investment / maxValue) * 200}px`,
-                  background: "#f59e0b",
-                  borderRadius: "6px 6px 0 0",
-                }}
-              />
-              <div
-                title={`Profit: ¥${Math.max(item.profit, 0).toLocaleString()}`}
-                style={{
-                  width: "18px",
-                  height: `${(Math.max(item.profit, 0) / maxValue) * 200}px`,
-                  background: "#10b981",
-                  borderRadius: "6px 6px 0 0",
-                }}
-              />
-            </div>
+              >
+                <div
+                  title={`Revenue: ¥${revenue.toLocaleString()}`}
+                  style={{
+                    width: "18px",
+                    height: `${(revenue / maxValue) * 200}px`,
+                    background: "#3b82f6",
+                    borderRadius: "6px 6px 0 0",
+                  }}
+                />
+                <div
+                  title={`Investment: ¥${investment.toLocaleString()}`}
+                  style={{
+                    width: "18px",
+                    height: `${(investment / maxValue) * 200}px`,
+                    background: "#f59e0b",
+                    borderRadius: "6px 6px 0 0",
+                  }}
+                />
+                <div
+                  title={`Profit: ¥${profit.toLocaleString()}`}
+                  style={{
+                    width: "18px",
+                    height: `${(profit / maxValue) * 200}px`,
+                    background: "#10b981",
+                    borderRadius: "6px 6px 0 0",
+                  }}
+                />
+              </div>
 
-            <div style={{ fontSize: "0.85rem", fontWeight: "bold" }}>{item.month}</div>
-            <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
-              {item.orders} orders
+              <div style={{ fontSize: "0.85rem", fontWeight: "bold" }}>
+                {item?.month || "-"}
+              </div>
+              <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
+                {orders} orders
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div
@@ -125,8 +143,9 @@ function SimpleBarChart({ data }) {
   );
 }
 
-function PieChart({ data }) {
-  const total = data.reduce((sum, d) => sum + d.value, 0) || 1;
+function PieChart({ data = [] }) {
+  const safeData = Array.isArray(data) ? data : [];
+  const total = safeData.reduce((sum, d) => sum + Number(d?.value || 0), 0) || 1;
   const colors = ["#3b82f6", "#f59e0b", "#10b981", "#ef4444", "#8b5cf6"];
 
   let cumulative = 0;
@@ -148,13 +167,13 @@ function PieChart({ data }) {
       <div style={{ display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap" }}>
         <svg width="180" height="180" viewBox="0 0 180 180">
           <g transform="translate(90,90) rotate(-90)">
-            {data.map((item, index) => {
-              const value = item.value;
+            {safeData.map((item, index) => {
+              const value = Number(item?.value || 0);
               const dash = (value / total) * circumference;
               const gap = circumference - dash;
               const circle = (
                 <circle
-                  key={item.name}
+                  key={item?.name || index}
                   r={radius}
                   cx="0"
                   cy="0"
@@ -185,8 +204,8 @@ function PieChart({ data }) {
         </svg>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-          {data.map((item, index) => (
-            <div key={item.name} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {safeData.map((item, index) => (
+            <div key={item?.name || index} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <div
                 style={{
                   width: "14px",
@@ -196,9 +215,9 @@ function PieChart({ data }) {
                 }}
               />
               <div>
-                <div style={{ fontWeight: "bold" }}>{item.name}</div>
+                <div style={{ fontWeight: "bold" }}>{item?.name || "-"}</div>
                 <div style={{ color: "#64748b", fontSize: "0.9rem" }}>
-                  ¥{item.value.toLocaleString()}
+                  ¥{Number(item?.value || 0).toLocaleString()}
                 </div>
               </div>
             </div>
@@ -228,6 +247,8 @@ export default function DashboardPage() {
           return;
         }
 
+        console.log("Dashboard summary:", data);
+
         if (!res.ok) {
           setStatus(data.message || "Failed to load dashboard");
           return;
@@ -243,6 +264,26 @@ export default function DashboardPage() {
 
     load();
   }, []);
+
+  const totalOrders = Number(summary?.totalOrders || 0);
+  const totalRevenue = Number(summary?.totalRevenue || 0);
+  const totalInvestment = Number(summary?.totalInvestment || 0);
+  const totalProfit = Number(summary?.totalProfit || 0);
+  const totalUnits = Number(summary?.totalUnits || 0);
+  const avgMinutesPerOrder = Number(summary?.avgMinutesPerOrder || 0);
+  const avgRevenuePerHour = Number(summary?.avgRevenuePerHour || 0);
+
+  // support both new and old backend field names
+  const totalFuelCost = Number(
+    summary?.totalFuelCost ??
+    summary?.totalGasFee ??
+    0
+  );
+
+  const monthlyStats = Array.isArray(summary?.monthlyStats) ? summary.monthlyStats : [];
+  const costBreakdown = Array.isArray(summary?.costBreakdown) ? summary.costBreakdown : [];
+  const topAreas = Array.isArray(summary?.topAreas) ? summary.topAreas : [];
+  const recentOrders = Array.isArray(summary?.recentOrders) ? summary.recentOrders : [];
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", background: "#f1f5f9" }}>
@@ -263,18 +304,18 @@ export default function DashboardPage() {
                 marginBottom: "24px",
               }}
             >
-              <StatCard title="Total Orders" value={summary.totalOrders.toLocaleString()} />
-              <StatCard title="Total Revenue" value={`¥${summary.totalRevenue.toLocaleString()}`} color="#2563eb" />
-              <StatCard title="Total Investment" value={`¥${summary.totalInvestment.toLocaleString()}`} color="#d97706" />
+              <StatCard title="Total Orders" value={totalOrders.toLocaleString()} />
+              <StatCard title="Total Revenue" value={`¥${totalRevenue.toLocaleString()}`} color="#2563eb" />
+              <StatCard title="Total Investment" value={`¥${totalInvestment.toLocaleString()}`} color="#d97706" />
               <StatCard
                 title="Total Profit"
-                value={`¥${summary.totalProfit.toLocaleString()}`}
-                color={summary.totalProfit >= 0 ? "#16a34a" : "#dc2626"}
+                value={`¥${totalProfit.toLocaleString()}`}
+                color={totalProfit >= 0 ? "#16a34a" : "#dc2626"}
               />
-              <StatCard title="Total Units" value={summary.totalUnits.toLocaleString()} />
-              <StatCard title="Avg Minutes / Order" value={summary.avgMinutesPerOrder.toFixed(1)} />
-              <StatCard title="Revenue / Hour" value={`¥${summary.avgRevenuePerHour.toFixed(0)}`} />
-              <StatCard title="Fuel Total" value={`¥${summary.totalFuelCost.toLocaleString()}`} />
+              <StatCard title="Total Units" value={totalUnits.toLocaleString()} />
+              <StatCard title="Avg Minutes / Order" value={avgMinutesPerOrder.toFixed(1)} />
+              <StatCard title="Revenue / Hour" value={`¥${avgRevenuePerHour.toFixed(0)}`} />
+              <StatCard title="Fuel Total" value={`¥${totalFuelCost.toLocaleString()}`} />
             </div>
 
             <div
@@ -285,8 +326,8 @@ export default function DashboardPage() {
                 marginBottom: "24px",
               }}
             >
-              <SimpleBarChart data={summary.monthlyStats} />
-              <PieChart data={summary.costBreakdown} />
+              <SimpleBarChart data={monthlyStats} />
+              <PieChart data={costBreakdown} />
             </div>
 
             <div
@@ -318,7 +359,7 @@ export default function DashboardPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {summary.topAreas.length === 0 && (
+                      {topAreas.length === 0 && (
                         <tr>
                           <td colSpan="4" style={{ padding: "14px", color: "#64748b" }}>
                             No checkout data yet.
@@ -326,17 +367,19 @@ export default function DashboardPage() {
                         </tr>
                       )}
 
-                      {summary.topAreas.map((area) => (
-                        <tr key={area.area}>
-                          <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>{area.area}</td>
-                          <td style={{ padding: "10px", textAlign: "right", borderBottom: "1px solid #f1f5f9" }}>
-                            {area.orderCount.toLocaleString()}
+                      {topAreas.map((area) => (
+                        <tr key={area?.area || Math.random()}>
+                          <td style={{ padding: "10px", borderBottom: "1px solid #f1f5f9" }}>
+                            {area?.area || "-"}
                           </td>
                           <td style={{ padding: "10px", textAlign: "right", borderBottom: "1px solid #f1f5f9" }}>
-                            {area.units.toLocaleString()}
+                            {Number(area?.orderCount || 0).toLocaleString()}
                           </td>
                           <td style={{ padding: "10px", textAlign: "right", borderBottom: "1px solid #f1f5f9" }}>
-                            ¥{area.revenue.toLocaleString()}
+                            {Number(area?.units || 0).toLocaleString()}
+                          </td>
+                          <td style={{ padding: "10px", textAlign: "right", borderBottom: "1px solid #f1f5f9" }}>
+                            ¥{Number(area?.revenue || 0).toLocaleString()}
                           </td>
                         </tr>
                       ))}
@@ -357,13 +400,13 @@ export default function DashboardPage() {
                 <h3 style={{ marginTop: 0 }}>Recent Orders</h3>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {summary.recentOrders.length === 0 && (
+                  {recentOrders.length === 0 && (
                     <p style={{ color: "#64748b" }}>No orders yet.</p>
                   )}
 
-                  {summary.recentOrders.map((order) => (
+                  {recentOrders.slice(0, 3).map((order) => (
                     <div
-                      key={order._id}
+                      key={order?._id || Math.random()}
                       style={{
                         border: "1px solid #e2e8f0",
                         borderRadius: "10px",
@@ -372,25 +415,25 @@ export default function DashboardPage() {
                       }}
                     >
                       <div style={{ fontWeight: "bold" }}>
-                        {new Date(order.orderDate).toLocaleString()}
+                        {order?.orderDate ? new Date(order.orderDate).toLocaleString() : "-"}
                       </div>
                       <div style={{ marginTop: "6px", color: "#334155" }}>
-                        Units: {order.totalUnits}
+                        Units: {Number(order?.totalUnits || 0).toLocaleString()}
                       </div>
                       <div style={{ color: "#334155" }}>
-                        Revenue: ¥{Number(order.salesAmount || 0).toLocaleString()}
+                        Revenue: ¥{Number(order?.salesAmount || 0).toLocaleString()}
                       </div>
                       <div style={{ color: "#334155" }}>
-                        Investment: ¥{Number(order.investmentAmount || 0).toLocaleString()}
+                        Investment: ¥{Number(order?.investmentAmount || 0).toLocaleString()}
                       </div>
                       <div
                         style={{
-                          color: order.profit >= 0 ? "#16a34a" : "#dc2626",
+                          color: Number(order?.profit || 0) >= 0 ? "#16a34a" : "#dc2626",
                           fontWeight: "bold",
                           marginTop: "4px",
                         }}
                       >
-                        Profit: ¥{Number(order.profit || 0).toLocaleString()}
+                        Profit: ¥{Number(order?.profit || 0).toLocaleString()}
                       </div>
                     </div>
                   ))}

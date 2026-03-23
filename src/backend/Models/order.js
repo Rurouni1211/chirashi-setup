@@ -57,6 +57,14 @@ const OrderSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    marginPercent: {
+      type: Number,
+      default: 0,
+    },
+    baseCostPerDelivery: {
+      type: Number,
+      default: 0,
+    },
     investmentAmount: {
       type: Number,
       default: 0,
