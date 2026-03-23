@@ -1,7 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 export default function Sidebar() {
   const location = useLocation();
+  const { t } = useLanguage();
 
   const linkStyle = (path) => ({
     display: "block",
@@ -26,31 +29,33 @@ export default function Sidebar() {
         top: 0,
       }}
     >
-      <h2>Admin Panel</h2>
+      <h2>{t("dashboard")}</h2>
 
       <div style={{ marginTop: "20px" }}>
         <Link to="/admin/dashboard" style={linkStyle("/admin/dashboard")}>
-          Dashboard
+          {t("dashboard")}
         </Link>
 
         <Link to="/admin/orders" style={linkStyle("/admin/orders")}>
-          Orders
+          {t("orders")}
         </Link>
 
         <Link to="/admin/areas" style={linkStyle("/admin/areas")}>
-          Distribution Areas
+          {t("distributionAreas")}
         </Link>
 
-        
-        <Link to="/admin/settings" style={linkStyle("/admin/settings")}>
-          Settings
+         <Link to="/admin/settings" style={linkStyle("/admin/settings")}>
+          {t("settings")}
         </Link>
 
         <Link to="/admin/add" style={linkStyle("/admin/add")}>
-          + Add New Area
+          {t("addNewArea")}
         </Link>
 
+       
       </div>
+
+      <LanguageSwitcher />
     </div>
   );
 }

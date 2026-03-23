@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
+import { useLanguage } from "../context/LanguageContext";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function AreasList() {
+  const { t } = useLanguage();
   const [items, setItems] = useState([]);
   const navigate = useNavigate();
 
@@ -48,7 +50,7 @@ export default function AreasList() {
       <Sidebar />
 
       <div style={{ flex: 1, padding: "20px" }}>
-        <h2>Distribution Areas</h2>
+        <h2>{t("distributionAreas")}</h2>
 
         {items.map((a) => (
           <div
@@ -60,23 +62,20 @@ export default function AreasList() {
               borderRadius: "8px",
             }}
           >
-            <strong>Name : {a.ku}</strong>
-
-            <p>Property Description : {a.property}</p>
-
-            <p>Price : {a.price}</p>
-
-            <p>Property Count : {a.count} units</p>
+            <p><strong>{t("name")} :</strong> {a.ku}</p>
+            <p><strong>{t("propertyDescription")} :</strong> {a.property}</p>
+            <p><strong>{t("price")} :</strong> ¥{Number(a.calculatedPrice || a.price || 0).toLocaleString()}</p>
+            <p><strong>{t("propertyCountLabel")} :</strong> {Number(a.count || 0).toLocaleString()} {t("units")}</p>
 
             <button onClick={() => navigate(`/admin/show/${a.ku}`)}>
-              Show
+              {t("show")}
             </button>
 
             <button
               onClick={() => navigate(`/admin/update/${a.ku}`)}
               style={{ marginLeft: "10px" }}
             >
-              Update
+              {t("update")}
             </button>
 
             <button
@@ -91,7 +90,7 @@ export default function AreasList() {
                 borderRadius: "4px",
               }}
             >
-              Delete
+              {t("delete")}
             </button>
           </div>
         ))}

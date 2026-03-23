@@ -2,10 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { useLanguage } from "../context/LanguageContext";
+import UserTopBar from "../components/UserTopBar";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function UserView({ refreshKey }) {
+  const { t } = useLanguage();
+
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});
   const [selectedAreas, setSelectedAreas] = useState({});
@@ -135,7 +139,7 @@ export default function UserView({ refreshKey }) {
   const handleCheckout = async () => {
     const entries = Object.entries(selectedAreas);
     if (!entries.length) {
-      setCheckoutStatus("Please select at least one area.");
+      setCheckoutStatus(t("pleaseSelectArea"));
       return;
     }
 
@@ -164,7 +168,7 @@ export default function UserView({ refreshKey }) {
         return;
       }
 
-      setCheckoutStatus("Checkout saved successfully");
+      setCheckoutStatus(t("checkoutSaved"));
       setSelectedAreas({});
     } catch (err) {
       console.error(err);
@@ -175,206 +179,213 @@ export default function UserView({ refreshKey }) {
   return (
     <div
       style={{
-        display: "flex",
-        gap: "20px",
         padding: "20px",
         background: "#f1f5f9",
         minHeight: "100vh",
       }}
     >
+      <UserTopBar />
+
       <div
         style={{
-          flex: 1,
-          background: "white",
-          padding: "10px",
-          borderRadius: "12px",
-          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+          display: "flex",
+          gap: "20px",
         }}
       >
-        <MapContainer
-          center={[34.6944, 135.1948]}
-          zoom={14}
-          style={{ height: "750px", borderRadius: "8px" }}
+        <div
+          style={{
+            flex: 1,
+            background: "white",
+            padding: "10px",
+            borderRadius: "12px",
+            boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+          }}
         >
-          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-          {geoData && (
-            <GeoJSON
-              key={
-                JSON.stringify(Object.keys(selectedAreas)) +
-                JSON.stringify(Object.keys(propertyMap))
-              }
-              data={geoData}
-              style={styleFeature}
-              onEachFeature={handleEachFeature}
-              ref={geoJsonRef}
-            />
-          )}
-        </MapContainer>
-      </div>
-
-      <div
-        style={{
-          width: "440px",
-          position: "sticky",
-          top: "20px",
-          height: "90vh",
-          overflowY: "auto",
-          background: "white",
-          border: "1px solid #e2e8f0",
-          padding: "20px",
-          borderRadius: "12px",
-          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
-        }}
-      >
-        <h2 style={{ borderBottom: "2px solid #f1f5f9", paddingBottom: "10px" }}>
-          Selected Areas
-        </h2>
-
-        {Object.keys(selectedAreas).length === 0 && (
-          <p style={{ color: "#64748b", marginTop: "20px" }}>
-            Click a <strong>green area</strong> on the map to add to your order.
-          </p>
-        )}
-
-        {Object.entries(selectedAreas).map(([name, data]) => (
-          <div
-            key={name}
-            style={{
-              border: "1px solid #f1f5f9",
-              padding: "15px",
-              marginBottom: "12px",
-              borderRadius: "8px",
-              background: "#f8fafc",
-            }}
+          <MapContainer
+            center={[34.6944, 135.1948]}
+            zoom={14}
+            style={{ height: "750px", borderRadius: "8px" }}
           >
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            {geoData && (
+              <GeoJSON
+                key={
+                  JSON.stringify(Object.keys(selectedAreas)) +
+                  JSON.stringify(Object.keys(propertyMap))
+                }
+                data={geoData}
+                style={styleFeature}
+                onEachFeature={handleEachFeature}
+                ref={geoJsonRef}
+              />
+            )}
+          </MapContainer>
+        </div>
+
+        <div
+          style={{
+            width: "440px",
+            position: "sticky",
+            top: "20px",
+            height: "90vh",
+            overflowY: "auto",
+            background: "white",
+            border: "1px solid #e2e8f0",
+            padding: "20px",
+            borderRadius: "12px",
+            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+          }}
+        >
+          <h2 style={{ borderBottom: "2px solid #f1f5f9", paddingBottom: "10px" }}>
+            {t("selectedAreas")}
+          </h2>
+
+          {Object.keys(selectedAreas).length === 0 && (
+            <p style={{ color: "#64748b", marginTop: "20px" }}>
+              {t("clickGreenArea")}
+            </p>
+          )}
+
+          {Object.entries(selectedAreas).map(([name, data]) => (
             <div
+              key={name}
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
+                border: "1px solid #f1f5f9",
+                padding: "15px",
+                marginBottom: "12px",
+                borderRadius: "8px",
+                background: "#f8fafc",
               }}
             >
-              <strong style={{ fontSize: "1.1rem" }}>{name}</strong>
-              <button
-                onClick={() => {
-                  const copy = { ...selectedAreas };
-                  delete copy[name];
-                  setSelectedAreas(copy);
-                }}
-                style={{
-                  border: "none",
-                  background: "none",
-                  color: "#ef4444",
-                  cursor: "pointer",
-                  fontSize: "1.2rem",
-                }}
-              >
-                ✕
-              </button>
-            </div>
-
-            <p style={{ margin: "8px 0" }}>
-              <b>Type:</b> {data.desc}
-            </p>
-
-            <p style={{ margin: "4px 0" }}>
-              <b>Unit Price:</b> ¥{Number(data.price || 0).toLocaleString()}
-            </p>
-
-            <div style={{ marginTop: "12px" }}>
-              <label>
-                <b>Adjust Quantity</b>
-              </label>
-              <input
-                type="range"
-                min="1"
-                max={data.baseQty}
-                value={data.userQty}
-                onChange={(e) => updateQty(name, Number(e.target.value))}
-                style={{ width: "100%", accentColor: "#be185d" }}
-              />
               <div
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  fontSize: "0.9rem",
+                  alignItems: "center",
                 }}
               >
-                <span>{data.userQty.toLocaleString()} units</span>
-                <span>Max: {data.baseQty.toLocaleString()}</span>
+                <strong style={{ fontSize: "1.1rem" }}>{name}</strong>
+                <button
+                  onClick={() => {
+                    const copy = { ...selectedAreas };
+                    delete copy[name];
+                    setSelectedAreas(copy);
+                  }}
+                  style={{
+                    border: "none",
+                    background: "none",
+                    color: "#ef4444",
+                    cursor: "pointer",
+                    fontSize: "1.2rem",
+                  }}
+                >
+                  ✕
+                </button>
               </div>
+
+              <p style={{ margin: "8px 0" }}>
+                <b>{t("type")}:</b> {data.desc}
+              </p>
+
+              <p style={{ margin: "4px 0" }}>
+                <b>{t("unitPrice")}:</b> ¥{Number(data.price || 0).toLocaleString()}
+              </p>
+
+              <div style={{ marginTop: "12px" }}>
+                <label>
+                  <b>{t("adjustQuantity")}</b>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max={data.baseQty}
+                  value={data.userQty}
+                  onChange={(e) => updateQty(name, Number(e.target.value))}
+                  style={{ width: "100%", accentColor: "#be185d" }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: "0.9rem",
+                  }}
+                >
+                  <span>{data.userQty.toLocaleString()} {t("units")}</span>
+                  <span>Max: {data.baseQty.toLocaleString()}</span>
+                </div>
+              </div>
+
+              <p
+                style={{
+                  marginTop: "10px",
+                  textAlign: "right",
+                  fontWeight: "bold",
+                }}
+              >
+                {t("subtotal")}: ¥{(data.userQty * data.price).toLocaleString()}
+              </p>
             </div>
+          ))}
 
-            <p
-              style={{
-                marginTop: "10px",
-                textAlign: "right",
-                fontWeight: "bold",
-              }}
-            >
-              Subtotal: ¥{(data.userQty * data.price).toLocaleString()}
-            </p>
-          </div>
-        ))}
-
-        {Object.keys(selectedAreas).length > 0 && (
-          <div
-            style={{
-              borderTop: "2px solid #f1f5f9",
-              paddingTop: "20px",
-              marginTop: "20px",
-            }}
-          >
-            <div style={{ marginBottom: "8px" }}>
-              <b>Total Units:</b> {totalUnits.toLocaleString()}
-            </div>
-
+          {Object.keys(selectedAreas).length > 0 && (
             <div
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: "16px",
-                marginBottom: "20px",
+                borderTop: "2px solid #f1f5f9",
+                paddingTop: "20px",
+                marginTop: "20px",
               }}
             >
-              <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                Total Amount:
-              </span>
-              <span
+              <div style={{ marginBottom: "8px" }}>
+                <b>{t("totalUnits")}:</b> {totalUnits.toLocaleString()}
+              </div>
+
+              <div
                 style={{
-                  fontSize: "1.5rem",
-                  fontWeight: "bold",
-                  color: "#be185d",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "16px",
+                  marginBottom: "20px",
                 }}
               >
-                ¥{salesAmount.toLocaleString()}
-              </span>
+                <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+                  {t("totalAmount")}:
+                </span>
+                <span
+                  style={{
+                    fontSize: "1.5rem",
+                    fontWeight: "bold",
+                    color: "#be185d",
+                  }}
+                >
+                  ¥{salesAmount.toLocaleString()}
+                </span>
+              </div>
+
+              <button
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  background: "#be185d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={handleCheckout}
+              >
+                {t("confirmCheckout")}
+              </button>
+
+              {checkoutStatus && (
+                <p style={{ marginTop: "12px", color: "#334155" }}>
+                  {checkoutStatus}
+                </p>
+              )}
             </div>
-
-            <button
-              style={{
-                width: "100%",
-                padding: "16px",
-                background: "#be185d",
-                color: "white",
-                border: "none",
-                borderRadius: "8px",
-                fontSize: "1.1rem",
-                fontWeight: "bold",
-                cursor: "pointer",
-              }}
-              onClick={handleCheckout}
-            >
-              Confirm Checkout
-            </button>
-
-            {checkoutStatus && (
-              <p style={{ marginTop: "12px", color: "#334155" }}>
-                {checkoutStatus}
-              </p>
-            )}
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

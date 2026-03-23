@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
+import { useLanguage } from "../context/LanguageContext";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function OrdersPage() {
+  const { t } = useLanguage();
+
   const [orders, setOrders] = useState([]);
   const [dateFilter, setDateFilter] = useState("");
   const [areaFilter, setAreaFilter] = useState("");
@@ -25,7 +28,6 @@ export default function OrdersPage() {
       try {
         data = JSON.parse(text);
       } catch {
-        console.error("GET /orders returned non-JSON:", text);
         setStatus("Orders API returned invalid response");
         return;
       }
@@ -37,8 +39,7 @@ export default function OrdersPage() {
 
       setOrders(Array.isArray(data) ? data : []);
       setStatus("");
-    } catch (err) {
-      console.error("Load orders error:", err);
+    } catch {
       setStatus("Failed to load orders");
     }
   };
@@ -58,7 +59,7 @@ export default function OrdersPage() {
       <Sidebar />
 
       <div style={{ flex: 1, padding: "24px" }}>
-        <h1 style={{ marginTop: 0 }}>Orders</h1>
+        <h1 style={{ marginTop: 0 }}>{t("orders")}</h1>
 
         <div
           style={{
@@ -75,57 +76,42 @@ export default function OrdersPage() {
         >
           <div>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-              Filter by Order Date
+              {t("filterByOrderDate")}
             </label>
             <input
               type="date"
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "8px",
-              }}
+              style={{ width: "100%", padding: "10px", border: "1px solid #cbd5e1", borderRadius: "8px" }}
             />
           </div>
 
           <div>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-              Filter by Area
+              {t("filterByArea")}
             </label>
             <input
               type="text"
               value={areaFilter}
               onChange={(e) => setAreaFilter(e.target.value)}
-              placeholder="Enter area name"
-              style={{
-                width: "100%",
-                padding: "10px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "8px",
-              }}
+              placeholder={t("enterAreaName")}
+              style={{ width: "100%", padding: "10px", border: "1px solid #cbd5e1", borderRadius: "8px" }}
             />
           </div>
 
           <div>
             <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-              Sort by
+              {t("sortBy")}
             </label>
             <select
               value={sortFilter}
               onChange={(e) => setSortFilter(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "10px",
-                border: "1px solid #cbd5e1",
-                borderRadius: "8px",
-              }}
+              style={{ width: "100%", padding: "10px", border: "1px solid #cbd5e1", borderRadius: "8px" }}
             >
-              <option value="latest">Latest Checkout</option>
-              <option value="oldest">Oldest Checkout</option>
-              <option value="highest">Most Checkout Money</option>
-              <option value="lowest">Less Checkout Money</option>
+              <option value="latest">{t("latestCheckout")}</option>
+              <option value="oldest">{t("oldestCheckout")}</option>
+              <option value="highest">{t("mostCheckoutMoney")}</option>
+              <option value="lowest">{t("lessCheckoutMoney")}</option>
             </select>
           </div>
 
@@ -142,7 +128,7 @@ export default function OrdersPage() {
                 fontWeight: "bold",
               }}
             >
-              Clear Filters
+              {t("clearFilters")}
             </button>
           </div>
         </div>
@@ -156,10 +142,9 @@ export default function OrdersPage() {
             boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
           }}
         >
-          <h2 style={{ marginTop: 0 }}>Saved Order List</h2>
+          <h2 style={{ marginTop: 0 }}>{t("savedOrderList")}</h2>
 
           {status && <p>{status}</p>}
-
           {!status && orders.length === 0 && (
             <p style={{ color: "#64748b" }}>No orders found.</p>
           )}
@@ -175,50 +160,34 @@ export default function OrdersPage() {
                   background: "#f8fafc",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    gap: "20px",
-                    flexWrap: "wrap",
-                  }}
-                >
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "20px", flexWrap: "wrap" }}>
                   <div>
                     <div style={{ fontWeight: "bold", fontSize: "1.05rem" }}>
                       {new Date(order.orderDate).toLocaleString()}
                     </div>
                     <div style={{ color: "#64748b", marginTop: "4px" }}>
-                      Order ID: {order._id}
+                      {t("orderId")}: {order._id}
                     </div>
                   </div>
 
                   <div style={{ textAlign: "right" }}>
-                    <div>
-                      <b>Revenue:</b> ¥{Number(order.salesAmount || 0).toLocaleString()}
-                    </div>
-                    <div>
-                      <b>Investment:</b> ¥{Number(order.investmentAmount || 0).toLocaleString()}
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: "bold",
-                        color: Number(order.profit || 0) >= 0 ? "#16a34a" : "#dc2626",
-                      }}
-                    >
-                      Profit: ¥{Number(order.profit || 0).toLocaleString()}
+                    <div><b>{t("revenue")}:</b> ¥{Number(order.salesAmount || 0).toLocaleString()}</div>
+                    <div><b>{t("investment")}:</b> ¥{Number(order.investmentAmount || 0).toLocaleString()}</div>
+                    <div style={{ fontWeight: "bold", color: Number(order.profit || 0) >= 0 ? "#16a34a" : "#dc2626" }}>
+                      {t("profit")}: ¥{Number(order.profit || 0).toLocaleString()}
                     </div>
                   </div>
                 </div>
 
                 <div style={{ marginTop: "14px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "10px" }}>
-                  <div><b>Total Units:</b> {Number(order.totalUnits || 0).toLocaleString()}</div>
-                  <div><b>Fuel Cost:</b> ¥{Number(order.fuelCost || 0).toLocaleString()}</div>
-                  <div><b>Labor Cost:</b> ¥{Number(order.laborCost || 0).toLocaleString()}</div>
-                  <div><b>Minutes:</b> {Number(order.avgMinutesNeeded || 0).toLocaleString()}</div>
+                  <div><b>{t("totalUnits")}:</b> {Number(order.totalUnits || 0).toLocaleString()}</div>
+                  <div><b>{t("fuelCost")}:</b> ¥{Number(order.fuelCost || 0).toLocaleString()}</div>
+                  <div><b>{t("laborCost")}:</b> ¥{Number(order.laborCost || 0).toLocaleString()}</div>
+                  <div><b>{t("minutes")}:</b> {Number(order.avgMinutesNeeded || 0).toLocaleString()}</div>
                 </div>
 
                 <div style={{ marginTop: "16px" }}>
-                  <b>Ordered Areas</b>
+                  <b>{t("orderedAreas")}</b>
                   <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
                     {(order.items || []).map((item, index) => (
                       <div
@@ -232,16 +201,16 @@ export default function OrdersPage() {
                       >
                         <div style={{ fontWeight: "bold" }}>{item.area}</div>
                         <div style={{ color: "#475569", marginTop: "4px" }}>
-                          Type: {item.desc}
+                          {t("type")}: {item.desc}
                         </div>
                         <div style={{ color: "#475569" }}>
-                          Unit Price: ¥{Number(item.unitPrice || 0).toLocaleString()}
+                          {t("unitPrice")}: ¥{Number(item.unitPrice || 0).toLocaleString()}
                         </div>
                         <div style={{ color: "#475569" }}>
                           Qty: {Number(item.qty || 0).toLocaleString()}
                         </div>
                         <div style={{ fontWeight: "bold", marginTop: "4px" }}>
-                          Subtotal: ¥{Number(item.subtotal || 0).toLocaleString()}
+                          {t("subtotal")}: ¥{Number(item.subtotal || 0).toLocaleString()}
                         </div>
                       </div>
                     ))}

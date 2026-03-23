@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "../context/LanguageContext";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function MapEditorPanel({ onSaved, initialData }) {
+  const { t } = useLanguage();
+
   const [ku, setKu] = useState("");
   const [property, setProperty] = useState("");
   const [count, setCount] = useState("");
@@ -96,7 +99,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
         background: "#fff",
       }}
     >
-      <h2>{initialData ? "Update Area" : "Add New Area"}</h2>
+      <h2>{initialData ? t("updateMap") : t("addNewArea")}</h2>
 
       <div
         style={{
@@ -109,7 +112,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           marginBottom: "20px",
         }}
       >
-        <label>Choume Name</label>
+        <label>{t("choumeName")}</label>
         <input
           value={ku}
           onChange={(e) => setKu(e.target.value)}
@@ -118,7 +121,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           disabled={!!initialData}
         />
 
-        <label>Property Description</label>
+        <label>{t("propertyDescription")}</label>
         <input
           value={property}
           onChange={(e) => setProperty(e.target.value)}
@@ -126,7 +129,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           style={{ padding: "8px" }}
         />
 
-        <label>Total Units</label>
+        <label>{t("totalUnitsLabel")}</label>
         <input
           type="number"
           value={count}
@@ -146,7 +149,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
             cursor: "pointer",
           }}
         >
-          {initialData ? "Update Map" : "Save to Map"}
+          {initialData ? t("updateMap") : t("saveToMap")}
         </button>
 
         {status && (
@@ -156,50 +159,7 @@ export default function MapEditorPanel({ onSaved, initialData }) {
         )}
       </div>
 
-      <h3 style={{ marginBottom: "10px" }}>Saved Areas</h3>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {items.length === 0 && (
-          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-            No saved areas yet.
-          </p>
-        )}
-
-        {items.map((item) => (
-          <div
-            key={item._id || item.ku}
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "8px",
-              padding: "10px",
-              background: "#f8fafc",
-            }}
-          >
-            <strong>{item.ku}</strong>
-            <p style={{ margin: "6px 0" }}>{item.property}</p>
-            <p style={{ margin: "6px 0", color: "#475569" }}>
-              Calculated Price: ¥{Number(item.calculatedPrice || 0).toLocaleString()}
-            </p>
-            <p style={{ margin: "6px 0", color: "#475569" }}>
-              {Number(item.count || 0).toLocaleString()} units
-            </p>
-
-            <button
-              onClick={() => handleDelete(item.ku)}
-              style={{
-                background: "#ef4444",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                padding: "6px 10px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
+    
     </div>
   );
 }
