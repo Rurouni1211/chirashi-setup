@@ -7,6 +7,7 @@ import UserView from "./frontend/pages/UserView";
 import MapAddPage from "./frontend/pages/MapAppPage";
 import DashboardPage from "./frontend/pages/DashboardPage";
 import MapEditorPage from "./frontend/pages/MapEditorPage";
+import SettingsPage from "./frontend/pages/SettingsPage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/admin/edit" element={<MapEditorPage />} />
         <Route path="/admin/show/:ku" element={<MapShow />} />
         <Route path="/admin/update/:ku" element={<MapUpdate />} />
+        <Route path="/admin/settings" element={<SettingsPage />} />
       </Routes>
     </BrowserRouter>
   );

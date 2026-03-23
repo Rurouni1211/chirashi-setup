@@ -9,9 +9,6 @@ export default function UserView({ refreshKey }) {
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});
   const [selectedAreas, setSelectedAreas] = useState({});
-  const [gasFee, setGasFee] = useState("0");
-  const [avgMinutesNeeded, setAvgMinutesNeeded] = useState("60");
-  const [hourlyRate, setHourlyRate] = useState("1000");
   const [checkoutStatus, setCheckoutStatus] = useState("");
 
   const geoJsonRef = useRef(null);
@@ -135,12 +132,6 @@ export default function UserView({ refreshKey }) {
     0
   );
 
-  const laborHours = Number(avgMinutesNeeded || 0) / 60;
-  const laborCost = laborHours * Number(hourlyRate || 0);
-  const investmentAmount = Number(gasFee || 0) + laborCost;
-  const profit = salesAmount - investmentAmount;
-  const revenuePerHour = laborHours > 0 ? salesAmount / laborHours : 0;
-
   const handleCheckout = async () => {
     const entries = Object.entries(selectedAreas);
     if (!entries.length) {
@@ -163,9 +154,6 @@ export default function UserView({ refreshKey }) {
         },
         body: JSON.stringify({
           items,
-          gasFee: Number(gasFee || 0),
-          avgMinutesNeeded: Number(avgMinutesNeeded || 0),
-          hourlyRate: Number(hourlyRate || 0),
         }),
       });
 
@@ -178,9 +166,6 @@ export default function UserView({ refreshKey }) {
 
       setCheckoutStatus("Checkout saved successfully");
       setSelectedAreas({});
-      setGasFee("0");
-      setAvgMinutesNeeded("60");
-      setHourlyRate("1000");
     } catch (err) {
       console.error(err);
       setCheckoutStatus("Checkout failed");
@@ -332,125 +317,61 @@ export default function UserView({ refreshKey }) {
         ))}
 
         {Object.keys(selectedAreas).length > 0 && (
-          <>
-            <div
-              style={{
-                background: "#f8fafc",
-                borderRadius: "10px",
-                padding: "15px",
-                marginTop: "15px",
-                marginBottom: "15px",
-                border: "1px solid #e2e8f0",
-              }}
-            >
-              <h3 style={{ marginTop: 0 }}>Cost Settings</h3>
-
-              <label style={{ display: "block", marginBottom: "6px" }}>
-                Gas Fee
-              </label>
-              <input
-                type="number"
-                value={gasFee}
-                onChange={(e) => setGasFee(e.target.value)}
-                style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
-              />
-
-              <label style={{ display: "block", marginBottom: "6px" }}>
-                Average Minutes Needed
-              </label>
-              <input
-                type="number"
-                value={avgMinutesNeeded}
-                onChange={(e) => setAvgMinutesNeeded(e.target.value)}
-                style={{ width: "100%", padding: "8px", marginBottom: "12px" }}
-              />
-
-              <label style={{ display: "block", marginBottom: "6px" }}>
-                Hourly Rate
-              </label>
-              <input
-                type="number"
-                value={hourlyRate}
-                onChange={(e) => setHourlyRate(e.target.value)}
-                style={{ width: "100%", padding: "8px" }}
-              />
+          <div
+            style={{
+              borderTop: "2px solid #f1f5f9",
+              paddingTop: "20px",
+              marginTop: "20px",
+            }}
+          >
+            <div style={{ marginBottom: "8px" }}>
+              <b>Total Units:</b> {totalUnits.toLocaleString()}
             </div>
-
             <div
               style={{
-                borderTop: "2px solid #f1f5f9",
-                paddingTop: "20px",
-                marginTop: "20px",
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: "16px",
+                marginBottom: "20px",
               }}
             >
-              <div style={{ marginBottom: "8px" }}>
-                <b>Total Units:</b> {totalUnits.toLocaleString()}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Sales Amount:</b> ¥{salesAmount.toLocaleString()}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Gas Fee:</b> ¥{Number(gasFee).toLocaleString()}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Labor Hours:</b> {laborHours.toFixed(2)}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Labor Cost:</b> ¥{laborCost.toLocaleString()}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Investment:</b> ¥{investmentAmount.toLocaleString()}
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <b>Revenue / Hour:</b> ¥{revenuePerHour.toFixed(0)}
-              </div>
-
-              <div
+              <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+                Total Amount:
+              </span>
+              <span
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "16px",
-                  marginBottom: "20px",
-                }}
-              >
-                <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                  Profit:
-                </span>
-                <span
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    color: profit >= 0 ? "#16a34a" : "#dc2626",
-                  }}
-                >
-                  ¥{profit.toLocaleString()}
-                </span>
-              </div>
-
-              <button
-                style={{
-                  width: "100%",
-                  padding: "16px",
-                  background: "#be185d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
+                  fontSize: "1.5rem",
                   fontWeight: "bold",
-                  cursor: "pointer",
+                  color: "#be185d",
                 }}
-                onClick={handleCheckout}
               >
-                Confirm Checkout
-              </button>
-
-              {checkoutStatus && (
-                <p style={{ marginTop: "12px", color: "#334155" }}>
-                  {checkoutStatus}
-                </p>
-              )}
+                ¥{salesAmount.toLocaleString()}
+              </span>
             </div>
-          </>
+
+            <button
+              style={{
+                width: "100%",
+                padding: "16px",
+                background: "#be185d",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                fontSize: "1.1rem",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+              onClick={handleCheckout}
+            >
+              Confirm Checkout
+            </button>
+
+            {checkoutStatus && (
+              <p style={{ marginTop: "12px", color: "#334155" }}>
+                {checkoutStatus}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>

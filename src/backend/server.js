@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const Property = require("./Models/property");
 const Order = require("./Models/order");
+const Settings = require("./Models/settings");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,9 +36,6 @@ app.get("/", (req, res) => {
  * =========================
  */
 
-/**
- * Get all properties
- */
 app.get("/properties", async (req, res) => {
   try {
     const items = await Property.find().sort({ ku: 1 });
@@ -49,9 +47,6 @@ app.get("/properties", async (req, res) => {
   }
 });
 
-/**
- * Get one property by ku
- */
 app.get("/property/:ku", async (req, res) => {
   try {
     const ku = req.params.ku;
@@ -69,9 +64,6 @@ app.get("/property/:ku", async (req, res) => {
   }
 });
 
-/**
- * Create or update property by ku
- */
 app.post("/property", async (req, res) => {
   try {
     const { ku, property, price, count } = req.body;
@@ -101,9 +93,6 @@ app.post("/property", async (req, res) => {
   }
 });
 
-/**
- * Delete by ku
- */
 app.delete("/property/:ku", async (req, res) => {
   try {
     const ku = req.params.ku;
@@ -118,24 +107,76 @@ app.delete("/property/:ku", async (req, res) => {
 
 /**
  * =========================
+ * SETTINGS ROUTES
+ * =========================
+ */
+
+app.get("/settings", async (req, res) => {
+  try {
+    let settings = await Settings.findOne();
+
+    if (!settings) {
+      settings = await Settings.create({
+        gasFee: 0,
+        hourlyRate: 1000,
+        avgMinutesNeeded: 60,
+      });
+    }
+
+    res.json(settings);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch settings", error: err.message });
+  }
+});
+
+app.post("/settings", async (req, res) => {
+  try {
+    const { gasFee, hourlyRate, avgMinutesNeeded } = req.body;
+
+    let settings = await Settings.findOne();
+
+    if (!settings) {
+      settings = new Settings();
+    }
+
+    settings.gasFee = Number(gasFee || 0);
+    settings.hourlyRate = Number(hourlyRate || 0);
+    settings.avgMinutesNeeded = Number(avgMinutesNeeded || 0);
+
+    await settings.save();
+
+    res.json(settings);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Failed to save settings", error: err.message });
+  }
+});
+
+/**
+ * =========================
  * ORDER ROUTES
  * =========================
  */
 
-/**
- * Save new checkout order
- */
 app.post("/orders", async (req, res) => {
   try {
-    const {
-      items,
-      gasFee = 0,
-      avgMinutesNeeded = 0,
-      hourlyRate = 0,
-    } = req.body;
+    const { items } = req.body;
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: "Order items are required" });
+    }
+
+    let settings = await Settings.findOne();
+
+    if (!settings) {
+      settings = await Settings.create({
+        gasFee: 0,
+        hourlyRate: 1000,
+        avgMinutesNeeded: 60,
+      });
     }
 
     const normalizedItems = items.map((item) => {
@@ -156,9 +197,9 @@ app.post("/orders", async (req, res) => {
       0,
     );
 
-    const safeGasFee = Number(gasFee || 0);
-    const safeAvgMinutesNeeded = Number(avgMinutesNeeded || 0);
-    const safeHourlyRate = Number(hourlyRate || 0);
+    const safeGasFee = Number(settings.gasFee || 0);
+    const safeAvgMinutesNeeded = Number(settings.avgMinutesNeeded || 0);
+    const safeHourlyRate = Number(settings.hourlyRate || 0);
 
     const laborHours = safeAvgMinutesNeeded / 60;
     const laborCost = laborHours * safeHourlyRate;
@@ -187,9 +228,6 @@ app.post("/orders", async (req, res) => {
   }
 });
 
-/**
- * Get all orders
- */
 app.get("/orders", async (req, res) => {
   try {
     const orders = await Order.find().sort({ orderDate: -1 });
@@ -201,9 +239,6 @@ app.get("/orders", async (req, res) => {
   }
 });
 
-/**
- * Dashboard summary
- */
 app.get("/dashboard/summary", async (req, res) => {
   try {
     const orders = await Order.find().sort({ orderDate: 1 });
@@ -330,10 +365,12 @@ app.get("/dashboard/summary", async (req, res) => {
 
     res.json(summary);
   } catch (err) {
-    res.status(500).json({
-      message: "Failed to fetch dashboard summary",
-      error: err.message,
-    });
+    res
+      .status(500)
+      .json({
+        message: "Failed to fetch dashboard summary",
+        error: err.message,
+      });
   }
 });
 

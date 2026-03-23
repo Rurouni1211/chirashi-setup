@@ -158,48 +158,6 @@ export default function MapEditorPanel({ onSaved, initialData }) {
           </p>
         )}
       </div>
-
-      <h3 style={{ marginBottom: "10px" }}>Saved Areas</h3>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-        {items.length === 0 && (
-          <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
-            No saved areas yet.
-          </p>
-        )}
-
-        {items.map((item) => (
-          <div
-            key={item._id || item.ku}
-            style={{
-              border: "1px solid #e2e8f0",
-              borderRadius: "8px",
-              padding: "10px",
-              background: "#f8fafc",
-            }}
-          >
-            <strong>{item.ku}</strong>
-            <p style={{ margin: "6px 0" }}>{item.property}</p>
-            <p style={{ margin: "6px 0", color: "#475569" }}>
-              {item.count} units
-            </p>
-
-            <button
-              onClick={() => handleDelete(item.ku)}
-              style={{
-                background: "#ef4444",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                padding: "6px 10px",
-                cursor: "pointer",
-              }}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

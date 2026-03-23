@@ -25,7 +25,7 @@ function StatCard({ title, value, color = "#0f172a" }) {
 function SimpleBarChart({ data }) {
   const maxValue = useMemo(() => {
     if (!data.length) return 1;
-    return Math.max(...data.map((d) => Math.max(d.revenue, d.investment, d.profit, d.orders)));
+    return Math.max(...data.map((d) => Math.max(d.revenue, d.investment, Math.max(d.profit, 0), d.orders)));
   }, [data]);
 
   return (
@@ -221,7 +221,16 @@ export default function DashboardPage() {
     const load = async () => {
       try {
         const res = await fetch(`${API}/dashboard/summary`);
-        const data = await res.json();
+        const text = await res.text();
+
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch {
+          console.error("Non-JSON response:", text);
+          setStatus("Dashboard API not found or returned invalid response");
+          return;
+        }
 
         if (!res.ok) {
           setStatus(data.message || "Failed to load dashboard");

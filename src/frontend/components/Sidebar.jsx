@@ -40,6 +40,10 @@ export default function Sidebar() {
         <Link to="/admin/add" style={linkStyle("/admin/add")}>
           + Add New Area
         </Link>
+
+        <Link to="/admin/settings" style={linkStyle("/admin/settings")}>
+          Settings
+        </Link>
       </div>
     </div>
   );
