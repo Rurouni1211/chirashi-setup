@@ -4,7 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const Property = require("./Models/property");
-const Order = require("./Models/Order");
+const Order = require("./Models/order");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
