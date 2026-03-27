@@ -1,11 +1,81 @@
 import { useEffect, useRef, useState } from "react";
-import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { GeoJSON, MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useLanguage } from "../context/LanguageContext";
 import UserTopBar from "../components/UserTopBar";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+function MapInteractionWatcher({ geoJsonRef, isMapMovingRef }) {
+  const map = useMap();
+
+  useEffect(() => {
+    const closeAllTooltips = () => {
+      const layers = geoJsonRef.current?.getLayers?.() || [];
+      layers.forEach((layer) => {
+        layer.closeTooltip?.();
+      });
+    };
+
+    const handleMoveStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleDragStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleZoomStart = () => {
+      isMapMovingRef.current = true;
+      closeAllTooltips();
+    };
+
+    const handleMoveEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleDragEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleZoomEnd = () => {
+      setTimeout(() => {
+        isMapMovingRef.current = false;
+      }, 50);
+    };
+
+    const handleMapClick = () => {
+      closeAllTooltips();
+    };
+
+    map.on("movestart", handleMoveStart);
+    map.on("dragstart", handleDragStart);
+    map.on("zoomstart", handleZoomStart);
+    map.on("moveend", handleMoveEnd);
+    map.on("dragend", handleDragEnd);
+    map.on("zoomend", handleZoomEnd);
+    map.on("click", handleMapClick);
+
+    return () => {
+      map.off("movestart", handleMoveStart);
+      map.off("dragstart", handleDragStart);
+      map.off("zoomstart", handleZoomStart);
+      map.off("moveend", handleMoveEnd);
+      map.off("dragend", handleDragEnd);
+      map.off("zoomend", handleZoomEnd);
+      map.off("click", handleMapClick);
+    };
+  }, [map, geoJsonRef, isMapMovingRef]);
+
+  return null;
+}
 
 export default function UserView({ refreshKey }) {
   const { t } = useLanguage();
@@ -16,6 +86,7 @@ export default function UserView({ refreshKey }) {
   const [checkoutStatus, setCheckoutStatus] = useState("");
 
   const geoJsonRef = useRef(null);
+  const isMapMovingRef = useRef(false);
 
   useEffect(() => {
     fetch("/wards.geojson")
@@ -29,6 +100,7 @@ export default function UserView({ refreshKey }) {
               id: i,
               geometry: geo,
               properties: {
+                ...geo.properties,
                 name:
                   geo.properties?.name ||
                   geo.properties?.S_NAME ||
@@ -41,7 +113,8 @@ export default function UserView({ refreshKey }) {
         } else {
           setGeoData(data);
         }
-      });
+      })
+      .catch((err) => console.error("GeoJSON load error:", err));
   }, []);
 
   useEffect(() => {
@@ -51,9 +124,12 @@ export default function UserView({ refreshKey }) {
         const data = await res.json();
 
         const map = {};
-        data.forEach((item) => {
-          if (item.ku) map[item.ku.trim()] = item;
-        });
+        if (Array.isArray(data)) {
+          data.forEach((item) => {
+            if (item?.ku) map[item.ku.trim()] = item;
+          });
+        }
+
         setPropertyMap(map);
       } catch (err) {
         console.error("Failed to load property map:", err);
@@ -64,13 +140,13 @@ export default function UserView({ refreshKey }) {
   }, [refreshKey]);
 
   const getName = (feature) => {
-    const p = feature?.properties;
-    return (p?.ku || p?.name || p?.S_NAME || p?.MOJI || "Unknown").trim();
+    const p = feature?.properties || {};
+    return (p.ku || p.name || p.S_NAME || p.N03_004 || p.MOJI || "Unknown").trim();
   };
 
   const styleFeature = (feature) => {
     const name = getName(feature);
-    const isSelected = selectedAreas[name];
+    const isSelected = !!selectedAreas[name];
     const adminData = propertyMap[name];
 
     return {
@@ -81,17 +157,79 @@ export default function UserView({ refreshKey }) {
     };
   };
 
+  const resetLayerStyle = (layer) => {
+    if (geoJsonRef.current) {
+      geoJsonRef.current.resetStyle(layer);
+    }
+  };
+
+  const closeAllTooltips = () => {
+    const layers = geoJsonRef.current?.getLayers?.() || [];
+    layers.forEach((layer) => {
+      layer.closeTooltip?.();
+    });
+  };
+
   const handleEachFeature = (feature, layer) => {
     const name = getName(feature);
 
+    layer.bindTooltip(name, {
+      sticky: false,
+      direction: "top",
+      className: "ward-tooltip",
+      opacity: 0.9,
+      offset: [0, -8],
+    });
+
     layer.on({
+      mouseover: (e) => {
+        if (isMapMovingRef.current) return;
+
+        closeAllTooltips();
+
+        const target = e.target;
+        const isSelected = !!selectedAreas[name];
+
+        target.setStyle({
+          weight: isSelected ? 3 : 1.5,
+          color: isSelected ? "#be185d" : "#0f172a",
+          fillOpacity: isSelected ? 0.85 : 0.85,
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          target.bringToFront();
+        }
+
+        target.openTooltip();
+      },
+
+      mouseout: (e) => {
+        const target = e.target;
+        resetLayerStyle(target);
+        target.closeTooltip();
+      },
+
+      mousedown: (e) => {
+        e.target.closeTooltip();
+      },
+
       click: (e) => {
         L.DomEvent.stopPropagation(e);
+
+        const target = e.target;
+        closeAllTooltips();
 
         if (selectedAreas[name]) {
           const copy = { ...selectedAreas };
           delete copy[name];
           setSelectedAreas(copy);
+
+          const layers = geoJsonRef.current?.getLayers?.() || [];
+          layers.forEach((l) => resetLayerStyle(l));
+
+          target.closeTooltip();
+          const el = target.getElement?.();
+          if (el) el.blur?.();
           return;
         }
 
@@ -99,6 +237,7 @@ export default function UserView({ refreshKey }) {
 
         if (!adminData) {
           console.warn(`Area "${name}" has no admin data. Ignoring click.`);
+          target.closeTooltip();
           return;
         }
 
@@ -111,6 +250,27 @@ export default function UserView({ refreshKey }) {
             userQty: 1,
           },
         }));
+
+        const layers = geoJsonRef.current?.getLayers?.() || [];
+        layers.forEach((l) => resetLayerStyle(l));
+
+        target.setStyle({
+          color: "#be185d",
+          weight: 3,
+          fillColor: "#f472b6",
+          fillOpacity: 0.85,
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+          target.bringToFront();
+        }
+
+        target.closeTooltip();
+
+        const el = target.getElement?.();
+        if (el) {
+          el.blur?.();
+        }
       },
     });
   };
@@ -207,6 +367,12 @@ export default function UserView({ refreshKey }) {
             style={{ height: "750px", borderRadius: "8px" }}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+            <MapInteractionWatcher
+              geoJsonRef={geoJsonRef}
+              isMapMovingRef={isMapMovingRef}
+            />
+
             {geoData && (
               <GeoJSON
                 key={
@@ -310,7 +476,9 @@ export default function UserView({ refreshKey }) {
                     fontSize: "0.9rem",
                   }}
                 >
-                  <span>{data.userQty.toLocaleString()} {t("units")}</span>
+                  <span>
+                    {data.userQty.toLocaleString()} {t("units")}
+                  </span>
                   <span>Max: {data.baseQty.toLocaleString()}</span>
                 </div>
               </div>
@@ -328,63 +496,71 @@ export default function UserView({ refreshKey }) {
           ))}
 
           {Object.keys(selectedAreas).length > 0 && (
-            <div
-              style={{
-                borderTop: "2px solid #f1f5f9",
-                paddingTop: "20px",
-                marginTop: "20px",
-              }}
-            >
-              <div style={{ marginBottom: "8px" }}>
-                <b>{t("totalUnits")}:</b> {totalUnits.toLocaleString()}
-              </div>
+  <div
+    style={{
+      position: "sticky",
+      bottom: "-20px",
+      marginTop: "20px",
+      marginLeft: "-20px",
+      marginRight: "-20px",
+      marginBottom: "-20px",
+      background: "white",
+      borderTop: "2px solid #f1f5f9",
+      padding: "20px",
+      zIndex: 30,
+      boxShadow: "0 -6px 12px rgba(0,0,0,0.04)",
+    }}
+  >
+    <div style={{ marginBottom: "8px" }}>
+      <b>{t("totalUnits")}:</b> {totalUnits.toLocaleString()}
+    </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginTop: "16px",
-                  marginBottom: "20px",
-                }}
-              >
-                <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-                  {t("totalAmount")}:
-                </span>
-                <span
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: "bold",
-                    color: "#be185d",
-                  }}
-                >
-                  ¥{salesAmount.toLocaleString()}
-                </span>
-              </div>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        marginTop: "16px",
+        marginBottom: "20px",
+      }}
+    >
+      <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
+        {t("totalAmount")}:
+      </span>
+      <span
+        style={{
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          color: "#be185d",
+        }}
+      >
+        ¥{salesAmount.toLocaleString()}
+      </span>
+    </div>
 
-              <button
-                style={{
-                  width: "100%",
-                  padding: "16px",
-                  background: "#be185d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "1.1rem",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                }}
-                onClick={handleCheckout}
-              >
-                {t("confirmCheckout")}
-              </button>
+    <button
+      style={{
+        width: "100%",
+        padding: "16px",
+        background: "#be185d",
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        fontSize: "1.1rem",
+        fontWeight: "bold",
+        cursor: "pointer",
+      }}
+      onClick={handleCheckout}
+    >
+      {t("confirmCheckout")}
+    </button>
 
-              {checkoutStatus && (
-                <p style={{ marginTop: "12px", color: "#334155" }}>
-                  {checkoutStatus}
-                </p>
-              )}
-            </div>
-          )}
+    {checkoutStatus && (
+      <p style={{ marginTop: "12px", color: "#334155" }}>
+        {checkoutStatus}
+      </p>
+    )}
+  </div>
+)}
         </div>
       </div>
     </div>
