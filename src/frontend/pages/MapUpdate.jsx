@@ -6,33 +6,64 @@ import MapEditorPanel from "../components/MapEditorPanel";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-//const API_BASE = "http://localhost:5000";
-
-export default function MapUpdate(){
+export default function MapUpdate() {
   const { ku } = useParams();
   const [refresh, setRefresh] = useState(0);
   const [existingData, setExistingData] = useState(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
-  // Fetch the existing information to carry it into the editor
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    if (!ku) return;
+
     fetch(`${API}/property/${encodeURIComponent(ku)}`)
-      .then(res => res.json())
-      .then(data => setExistingData(data))
-      .catch(err => console.error("Error loading area:", err));
+      .then((res) => res.json())
+      .then((data) => setExistingData(data))
+      .catch((err) => console.error("Error loading area:", err));
   }, [ku]);
 
-  return(
-    <div style={{display:"flex"}}>
-      <Sidebar/>
-      <div style={{flex:1, display:"flex"}}>
-        <div style={{flex:1}}>
-          <MapView highlight={ku} refreshKey={refresh}/>
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        minHeight: "100vh",
+        background: "#f1f5f9",
+      }}
+    >
+      <Sidebar />
+
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          minWidth: 0,
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            width: "100%",
+          }}
+        >
+          <MapView highlight={ku} refreshKey={refresh} />
         </div>
-        <MapEditorPanel 
-          initialData={existingData} 
-          onSaved={() => setRefresh(r => r + 1)}
+
+        <MapEditorPanel
+          initialData={existingData}
+          onSaved={() => setRefresh((r) => r + 1)}
         />
       </div>
     </div>
-  )
+  );
 }

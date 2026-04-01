@@ -84,9 +84,19 @@ export default function UserView({ refreshKey }) {
   const [propertyMap, setPropertyMap] = useState({});
   const [selectedAreas, setSelectedAreas] = useState({});
   const [checkoutStatus, setCheckoutStatus] = useState("");
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const geoJsonRef = useRef(null);
   const isMapMovingRef = useRef(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetch("/wards.geojson")
@@ -183,7 +193,7 @@ export default function UserView({ refreshKey }) {
 
     layer.on({
       mouseover: (e) => {
-        if (isMapMovingRef.current) return;
+        if (isMapMovingRef.current || isMobile) return;
 
         closeAllTooltips();
 
@@ -339,7 +349,7 @@ export default function UserView({ refreshKey }) {
   return (
     <div
       style={{
-        padding: "20px",
+        padding: isMobile ? "12px" : "20px",
         background: "#f1f5f9",
         minHeight: "100vh",
       }}
@@ -349,14 +359,16 @@ export default function UserView({ refreshKey }) {
       <div
         style={{
           display: "flex",
+          flexDirection: isMobile ? "column" : "row",
           gap: "20px",
         }}
       >
         <div
           style={{
             flex: 1,
+            width: "100%",
             background: "white",
-            padding: "10px",
+            padding: isMobile ? "8px" : "10px",
             borderRadius: "12px",
             boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
           }}
@@ -364,7 +376,19 @@ export default function UserView({ refreshKey }) {
           <MapContainer
             center={[34.6944, 135.1948]}
             zoom={14}
-            style={{ height: "750px", borderRadius: "8px" }}
+            scrollWheelZoom={true}
+            dragging={true}
+            touchZoom={true}
+            doubleClickZoom={true}
+            boxZoom={!isMobile}
+            keyboard={!isMobile}
+            tap={true}
+            style={{
+              height: isMobile ? "55vh" : "750px",
+              width: "100%",
+              borderRadius: "8px",
+              touchAction: "pan-x pan-y",
+            }}
           >
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
@@ -390,14 +414,15 @@ export default function UserView({ refreshKey }) {
 
         <div
           style={{
-            width: "440px",
-            position: "sticky",
-            top: "20px",
-            height: "90vh",
+            width: isMobile ? "100%" : "440px",
+            position: isMobile ? "relative" : "sticky",
+            top: isMobile ? "auto" : "20px",
+            height: isMobile ? "auto" : "90vh",
+            maxHeight: isMobile ? "none" : "90vh",
             overflowY: "auto",
             background: "white",
             border: "1px solid #e2e8f0",
-            padding: "20px",
+            padding: isMobile ? "16px" : "20px",
             borderRadius: "12px",
             boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
           }}
@@ -428,9 +453,12 @@ export default function UserView({ refreshKey }) {
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
+                  gap: "10px",
                 }}
               >
-                <strong style={{ fontSize: "1.1rem" }}>{name}</strong>
+                <strong style={{ fontSize: "1.05rem", wordBreak: "break-word" }}>
+                  {name}
+                </strong>
                 <button
                   onClick={() => {
                     const copy = { ...selectedAreas };
@@ -443,6 +471,7 @@ export default function UserView({ refreshKey }) {
                     color: "#ef4444",
                     cursor: "pointer",
                     fontSize: "1.2rem",
+                    flexShrink: 0,
                   }}
                 >
                   ✕
@@ -473,7 +502,9 @@ export default function UserView({ refreshKey }) {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
+                    gap: "10px",
                     fontSize: "0.9rem",
+                    flexWrap: "wrap",
                   }}
                 >
                   <span>
@@ -496,71 +527,74 @@ export default function UserView({ refreshKey }) {
           ))}
 
           {Object.keys(selectedAreas).length > 0 && (
-  <div
-    style={{
-      position: "sticky",
-      bottom: "-20px",
-      marginTop: "20px",
-      marginLeft: "-20px",
-      marginRight: "-20px",
-      marginBottom: "-20px",
-      background: "white",
-      borderTop: "2px solid #f1f5f9",
-      padding: "20px",
-      zIndex: 30,
-      boxShadow: "0 -6px 12px rgba(0,0,0,0.04)",
-    }}
-  >
-    <div style={{ marginBottom: "8px" }}>
-      <b>{t("totalUnits")}:</b> {totalUnits.toLocaleString()}
-    </div>
+            <div
+              style={{
+                position: isMobile ? "relative" : "sticky",
+                bottom: isMobile ? "auto" : "-20px",
+                marginTop: "20px",
+                marginLeft: isMobile ? "0" : "-20px",
+                marginRight: isMobile ? "0" : "-20px",
+                marginBottom: isMobile ? "0" : "-20px",
+                background: "white",
+                borderTop: "2px solid #f1f5f9",
+                padding: isMobile ? "16px 0 0 0" : "20px",
+                zIndex: 30,
+                boxShadow: isMobile ? "none" : "0 -6px 12px rgba(0,0,0,0.04)",
+              }}
+            >
+              <div style={{ marginBottom: "8px" }}>
+                <b>{t("totalUnits")}:</b> {totalUnits.toLocaleString()}
+              </div>
 
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        marginTop: "16px",
-        marginBottom: "20px",
-      }}
-    >
-      <span style={{ fontSize: "1.2rem", fontWeight: "bold" }}>
-        {t("totalAmount")}:
-      </span>
-      <span
-        style={{
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          color: "#be185d",
-        }}
-      >
-        ¥{salesAmount.toLocaleString()}
-      </span>
-    </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  gap: "12px",
+                  marginTop: "16px",
+                  marginBottom: "20px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <span style={{ fontSize: "1.1rem", fontWeight: "bold" }}>
+                  {t("totalAmount")}:
+                </span>
+                <span
+                  style={{
+                    fontSize: isMobile ? "1.3rem" : "1.5rem",
+                    fontWeight: "bold",
+                    color: "#be185d",
+                  }}
+                >
+                  ¥{salesAmount.toLocaleString()}
+                </span>
+              </div>
 
-    <button
-      style={{
-        width: "100%",
-        padding: "16px",
-        background: "#be185d",
-        color: "white",
-        border: "none",
-        borderRadius: "8px",
-        fontSize: "1.1rem",
-        fontWeight: "bold",
-        cursor: "pointer",
-      }}
-      onClick={handleCheckout}
-    >
-      {t("confirmCheckout")}
-    </button>
+              <button
+                style={{
+                  width: "100%",
+                  padding: "16px",
+                  background: "#be185d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "1.1rem",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+                onClick={handleCheckout}
+              >
+                {t("confirmCheckout")}
+              </button>
 
-    {checkoutStatus && (
-      <p style={{ marginTop: "12px", color: "#334155" }}>
-        {checkoutStatus}
-      </p>
-    )}
-  </div>
-)}
+              {checkoutStatus && (
+                <p style={{ marginTop: "12px", color: "#334155" }}>
+                  {checkoutStatus}
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

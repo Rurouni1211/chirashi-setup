@@ -113,9 +113,19 @@ export default function MapView({ refreshKey, highlight }) {
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});
   const [activeArea, setActiveArea] = useState(highlight || null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const geoJsonRef = useRef(null);
   const isMapMovingRef = useRef(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     if (highlight) {
@@ -288,7 +298,10 @@ export default function MapView({ refreshKey, highlight }) {
       <MapContainer
         center={[34.6944, 135.1948]}
         zoom={13}
-        style={{ height: "650px", width: "100%" }}
+        style={{
+          height: isMobile ? "55vh" : "650px",
+          width: "100%",
+        }}
       >
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 

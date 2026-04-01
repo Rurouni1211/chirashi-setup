@@ -8,6 +8,7 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 export default function AreasList() {
   const { t } = useLanguage();
   const [items, setItems] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const navigate = useNavigate();
 
   const loadItems = () => {
@@ -19,6 +20,12 @@ export default function AreasList() {
 
   useEffect(() => {
     loadItems();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleDelete = async (ku) => {
@@ -46,52 +53,98 @@ export default function AreasList() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: isMobile ? "column" : "row",
+        minHeight: "100vh",
+      }}
+    >
       <Sidebar />
 
-      <div style={{ flex: 1, padding: "20px" }}>
-        <h2>{t("distributionAreas")}</h2>
+      <div
+        style={{
+          flex: 1,
+          padding: isMobile ? "14px" : "20px",
+          minWidth: 0,
+        }}
+      >
+        <h2
+          style={{
+            marginTop: 0,
+            fontSize: isMobile ? "1.4rem" : "1.5rem",
+          }}
+        >
+          {t("distributionAreas")}
+        </h2>
 
         {items.map((a) => (
           <div
             key={a._id}
             style={{
               border: "1px solid #ddd",
-              padding: "10px",
+              padding: isMobile ? "14px" : "10px",
               marginBottom: "10px",
               borderRadius: "8px",
+              background: "#fff",
             }}
           >
-            <p><strong>{t("name")} :</strong> {a.ku}</p>
-            <p><strong>{t("propertyDescription")} :</strong> {a.property}</p>
-            <p><strong>{t("price")} :</strong> ¥{Number(a.calculatedPrice || a.price || 0).toLocaleString()}</p>
-            <p><strong>{t("propertyCountLabel")} :</strong> {Number(a.count || 0).toLocaleString()} {t("units")}</p>
+            <p style={{ wordBreak: "break-word" }}>
+              <strong>{t("name")} :</strong> {a.ku}
+            </p>
+            <p style={{ wordBreak: "break-word" }}>
+              <strong>{t("propertyDescription")} :</strong> {a.property}
+            </p>
+            <p style={{ wordBreak: "break-word" }}>
+              <strong>{t("price")} :</strong> ¥{Number(a.calculatedPrice || a.price || 0).toLocaleString()}
+            </p>
+            <p style={{ wordBreak: "break-word" }}>
+              <strong>{t("propertyCountLabel")} :</strong> {Number(a.count || 0).toLocaleString()} {t("units")}
+            </p>
 
-            <button onClick={() => navigate(`/admin/show/${a.ku}`)}>
-              {t("show")}
-            </button>
-
-            <button
-              onClick={() => navigate(`/admin/update/${a.ku}`)}
-              style={{ marginLeft: "10px" }}
-            >
-              {t("update")}
-            </button>
-
-            <button
-              onClick={() => handleDelete(a.ku)}
+            <div
               style={{
-                marginLeft: "10px",
-                backgroundColor: "red",
-                color: "white",
-                border: "none",
-                padding: "6px 12px",
-                cursor: "pointer",
-                borderRadius: "4px",
+                display: "flex",
+                flexDirection: isMobile ? "column" : "row",
+                gap: isMobile ? "10px" : "0",
+                marginTop: "10px",
               }}
             >
-              {t("delete")}
-            </button>
+              <button
+                onClick={() => navigate(`/admin/show/${a.ku}`)}
+                style={{
+                  width: isMobile ? "100%" : "auto",
+                }}
+              >
+                {t("show")}
+              </button>
+
+              <button
+                onClick={() => navigate(`/admin/update/${a.ku}`)}
+                style={{
+                  marginLeft: isMobile ? "0" : "10px",
+                  width: isMobile ? "100%" : "auto",
+                }}
+              >
+                {t("update")}
+              </button>
+
+              <button
+                onClick={() => handleDelete(a.ku)}
+                style={{
+                  marginLeft: isMobile ? "0" : "10px",
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  padding: "6px 12px",
+                  cursor: "pointer",
+                  borderRadius: "4px",
+                  width: isMobile ? "100%" : "auto",
+                }}
+              >
+                {t("delete")}
+              </button>
+            </div>
           </div>
         ))}
       </div>
