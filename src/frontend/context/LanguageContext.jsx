@@ -4,29 +4,72 @@ import { translations } from "../i18n/translations";
 const LanguageContext = createContext(null);
 
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState(() => {
-    return localStorage.getItem("app_language") || "en";
+  const [adminLanguage, setAdminLanguage] = useState(() => {
+    return localStorage.getItem("adminLanguage") || "en";
+  });
+
+  const [userLanguage, setUserLanguage] = useState(() => {
+    return localStorage.getItem("userLanguage") || "ja";
   });
 
   useEffect(() => {
-    localStorage.setItem("app_language", language);
-  }, [language]);
+    localStorage.setItem("adminLanguage", adminLanguage);
+  }, [adminLanguage]);
 
-  const t = useMemo(() => {
-    return (key) => translations[language]?.[key] || translations.en[key] || key;
-  }, [language]);
+  useEffect(() => {
+    localStorage.setItem("userLanguage", userLanguage);
+  }, [userLanguage]);
+
+  const translate = (lang, key) => {
+    return translations?.[lang]?.[key] || key;
+  };
+
+  const value = useMemo(
+    () => ({
+      adminLanguage,
+      setAdminLanguage,
+      userLanguage,
+      setUserLanguage,
+      tAdmin: (key) => translate(adminLanguage, key),
+      tUser: (key) => translate(userLanguage, key),
+    }),
+    [adminLanguage, userLanguage]
+  );
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+    <LanguageContext.Provider value={value}>
       {children}
     </LanguageContext.Provider>
   );
 }
 
-export function useLanguage() {
-  const ctx = useContext(LanguageContext);
-  if (!ctx) {
+export function useLanguage(scope = "admin") {
+  const context = useContext(LanguageContext);
+
+  if (!context) {
     throw new Error("useLanguage must be used inside LanguageProvider");
   }
-  return ctx;
+
+  const {
+    adminLanguage,
+    setAdminLanguage,
+    userLanguage,
+    setUserLanguage,
+    tAdmin,
+    tUser,
+  } = context;
+
+  if (scope === "user") {
+    return {
+      language: userLanguage,
+      setLanguage: setUserLanguage,
+      t: tUser,
+    };
+  }
+
+  return {
+    language: adminLanguage,
+    setLanguage: setAdminLanguage,
+    t: tAdmin,
+  };
 }

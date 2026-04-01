@@ -78,7 +78,7 @@ function MapInteractionWatcher({ geoJsonRef, isMapMovingRef }) {
 }
 
 export default function UserView({ refreshKey }) {
-  const { t } = useLanguage();
+  const { t } = useLanguage("user");
 
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});

@@ -1,13 +1,20 @@
 import { useLanguage } from "../context/LanguageContext";
 
-export default function LanguageSwitcher() {
-  const { language, setLanguage } = useLanguage();
+export default function LanguageSwitcher({ scope = "admin" }) {
+  const { language, setLanguage, t } = useLanguage(scope);
 
   return (
     <div style={{ marginTop: "20px" }}>
-      <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
-        Language
+      <label
+        style={{
+          display: "block",
+          marginBottom: "8px",
+          fontWeight: "bold",
+        }}
+      >
+        {t("language")}
       </label>
+
       <select
         value={language}
         onChange={(e) => setLanguage(e.target.value)}
@@ -18,9 +25,9 @@ export default function LanguageSwitcher() {
           border: "1px solid #64748b",
         }}
       >
-        <option value="en">English</option>
-        <option value="ja">日本語</option>
-        <option value="my">မြန်မာ</option>
+        <option value="en">{t("english")}</option>
+        <option value="ja">{t("japanese")}</option>
+        <option value="my">{t("myanmar")}</option>
       </select>
     </div>
   );

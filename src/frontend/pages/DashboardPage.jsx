@@ -237,7 +237,7 @@ export default function DashboardPage() {
 
   const yearOptions = useMemo(() => {
     const years = [];
-    for (let y = currentYear; y >= currentYear - 5; y--) {
+    for (let y = currentYear; y <= currentYear + 5; y++) {
       years.push(String(y));
     }
     return years;

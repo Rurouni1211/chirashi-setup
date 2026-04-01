@@ -109,7 +109,11 @@ function MapInteractionWatcher({ geoJsonRef, isMapMovingRef }) {
   return null;
 }
 
-export default function MapView({ refreshKey, highlight }) {
+export default function MapView({
+  refreshKey,
+  highlight,
+  preventRegisteredAreaSelection = false,
+}) {
   const [geoData, setGeoData] = useState(null);
   const [propertyMap, setPropertyMap] = useState({});
   const [activeArea, setActiveArea] = useState(highlight || null);
@@ -263,7 +267,16 @@ export default function MapView({ refreshKey, highlight }) {
         L.DomEvent.stopPropagation(e);
 
         const target = e.target;
+        const hasData = !!propertyMap[wardName];
+
         closeAllTooltips();
+
+        if (preventRegisteredAreaSelection && hasData) {
+          target.closeTooltip();
+          const el = target.getElement?.();
+          if (el) el.blur?.();
+          return;
+        }
 
         setActiveArea(wardName);
 

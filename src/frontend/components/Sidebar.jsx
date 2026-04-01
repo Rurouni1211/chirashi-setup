@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function Sidebar() {
   const location = useLocation();
-  const { t } = useLanguage();
+  const { t } = useLanguage("admin");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -171,7 +171,7 @@ export default function Sidebar() {
           </div>
 
           <div style={{ marginTop: "24px" }}>
-            <LanguageSwitcher />
+            <LanguageSwitcher scope="admin" />
           </div>
         </div>
       </>
@@ -215,7 +215,7 @@ export default function Sidebar() {
         </Link>
       </div>
 
-      <LanguageSwitcher />
+      <LanguageSwitcher scope="admin" />
     </div>
   );
 }

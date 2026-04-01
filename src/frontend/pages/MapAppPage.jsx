@@ -39,7 +39,10 @@ export default function MapAddPage() {
             width: "100%",
           }}
         >
-          <MapView refreshKey={refresh} />
+          <MapView
+            refreshKey={refresh}
+            preventRegisteredAreaSelection={true}
+          />
         </div>
 
         <MapEditorPanel onSaved={() => setRefresh((r) => r + 1)} />
