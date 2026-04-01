@@ -348,7 +348,31 @@ app.get("/orders", async (req, res) => {
 
 app.get("/dashboard/summary", async (req, res) => {
   try {
-    const orders = await Order.find().sort({ orderDate: 1 });
+    const { view = "overall", year, month } = req.query;
+
+    let dateFilter = {};
+
+    if (view === "yearly" && year) {
+      const y = Number(year);
+      if (!Number.isNaN(y)) {
+        const start = new Date(y, 0, 1);
+        const end = new Date(y + 1, 0, 1);
+        dateFilter.orderDate = { $gte: start, $lt: end };
+      }
+    }
+
+    if (view === "monthly" && year && month) {
+      const y = Number(year);
+      const m = Number(month);
+
+      if (!Number.isNaN(y) && !Number.isNaN(m) && m >= 1 && m <= 12) {
+        const start = new Date(y, m - 1, 1);
+        const end = new Date(y, m, 1);
+        dateFilter.orderDate = { $gte: start, $lt: end };
+      }
+    }
+
+    const orders = await Order.find(dateFilter).sort({ orderDate: 1 });
 
     const summary = {
       totalOrders: 0,
@@ -362,6 +386,7 @@ app.get("/dashboard/summary", async (req, res) => {
       avgRevenuePerHour: 0,
       topAreas: [],
       monthlyStats: [],
+      chartStats: [],
       costBreakdown: [],
       recentOrders: [],
     };
@@ -375,15 +400,16 @@ app.get("/dashboard/summary", async (req, res) => {
       return res.json(summary);
     }
 
-    summary.totalOrders = orders.length;
-
     let totalMinutes = 0;
     let totalHours = 0;
 
     const areaMap = {};
     const monthMap = {};
+    const dayMap = {};
+    const yearMap = {};
 
     for (const order of orders) {
+      summary.totalOrders += 1;
       summary.totalUnits += Number(order.totalUnits || 0);
       summary.totalRevenue += Number(order.salesAmount || 0);
       summary.totalFuelCost += Number(order.fuelCost || 0);
@@ -395,13 +421,32 @@ app.get("/dashboard/summary", async (req, res) => {
       totalHours += Number(order.laborHours || 0);
 
       const d = new Date(order.orderDate);
-      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
-        2,
-        "0",
-      )}`;
+
+      const yearKey = String(d.getFullYear());
+      const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+      const dayKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+      if (!yearMap[yearKey]) {
+        yearMap[yearKey] = {
+          label: yearKey,
+          year: yearKey,
+          orders: 0,
+          revenue: 0,
+          investment: 0,
+          profit: 0,
+          units: 0,
+        };
+      }
+
+      yearMap[yearKey].orders += 1;
+      yearMap[yearKey].revenue += Number(order.salesAmount || 0);
+      yearMap[yearKey].investment += Number(order.investmentAmount || 0);
+      yearMap[yearKey].profit += Number(order.profit || 0);
+      yearMap[yearKey].units += Number(order.totalUnits || 0);
 
       if (!monthMap[monthKey]) {
         monthMap[monthKey] = {
+          label: monthKey,
           month: monthKey,
           orders: 0,
           revenue: 0,
@@ -416,6 +461,24 @@ app.get("/dashboard/summary", async (req, res) => {
       monthMap[monthKey].investment += Number(order.investmentAmount || 0);
       monthMap[monthKey].profit += Number(order.profit || 0);
       monthMap[monthKey].units += Number(order.totalUnits || 0);
+
+      if (!dayMap[dayKey]) {
+        dayMap[dayKey] = {
+          label: dayKey,
+          day: dayKey,
+          orders: 0,
+          revenue: 0,
+          investment: 0,
+          profit: 0,
+          units: 0,
+        };
+      }
+
+      dayMap[dayKey].orders += 1;
+      dayMap[dayKey].revenue += Number(order.salesAmount || 0);
+      dayMap[dayKey].investment += Number(order.investmentAmount || 0);
+      dayMap[dayKey].profit += Number(order.profit || 0);
+      dayMap[dayKey].units += Number(order.totalUnits || 0);
 
       for (const item of order.items || []) {
         const areaName = String(item.area || "").trim();
@@ -452,6 +515,20 @@ app.get("/dashboard/summary", async (req, res) => {
       a.month.localeCompare(b.month),
     );
 
+    if (view === "monthly") {
+      summary.chartStats = Object.values(dayMap).sort((a, b) =>
+        a.day.localeCompare(b.day),
+      );
+    } else if (view === "yearly") {
+      summary.chartStats = Object.values(monthMap).sort((a, b) =>
+        a.month.localeCompare(b.month),
+      );
+    } else {
+      summary.chartStats = Object.values(monthMap).sort((a, b) =>
+        a.month.localeCompare(b.month),
+      );
+    }
+
     summary.costBreakdown = [
       { name: "Fuel", value: summary.totalFuelCost },
       { name: "Labor", value: summary.totalLaborCost },
@@ -472,12 +549,10 @@ app.get("/dashboard/summary", async (req, res) => {
 
     res.json(summary);
   } catch (err) {
-    res
-      .status(500)
-      .json({
-        message: "Failed to fetch dashboard summary",
-        error: err.message,
-      });
+    res.status(500).json({
+      message: "Failed to fetch dashboard summary",
+      error: err.message,
+    });
   }
 });
 

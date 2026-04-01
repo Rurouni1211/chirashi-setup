@@ -38,7 +38,7 @@ function StatCard({ title, value, color = "#0f172a", isMobile }) {
   );
 }
 
-function SimpleBarChart({ data = [], t, isMobile }) {
+function SimpleBarChart({ data = [], t, isMobile, viewMode }) {
   const safeData = Array.isArray(data) ? data : [];
 
   const maxValue = useMemo(() => {
@@ -55,6 +55,13 @@ function SimpleBarChart({ data = [], t, isMobile }) {
     );
   }, [safeData]);
 
+  const chartTitle =
+    viewMode === "overall"
+      ? t("overallChart") || "Overall Chart"
+      : viewMode === "monthly"
+      ? t("dailyChart") || "Daily Chart"
+      : t("monthlyChart");
+
   return (
     <div
       style={{
@@ -66,7 +73,7 @@ function SimpleBarChart({ data = [], t, isMobile }) {
       }}
     >
       <h3 style={{ marginTop: 0, fontSize: isMobile ? "1rem" : "1.15rem" }}>
-        {t("monthlyChart")}
+        {chartTitle}
       </h3>
 
       <div
@@ -88,7 +95,7 @@ function SimpleBarChart({ data = [], t, isMobile }) {
 
           return (
             <div
-              key={item?.month || idx}
+              key={item?.label || item?.day || item?.month || item?.year || idx}
               style={{
                 minWidth: isMobile ? "72px" : "90px",
                 display: "flex",
@@ -131,9 +138,11 @@ function SimpleBarChart({ data = [], t, isMobile }) {
                   }}
                 />
               </div>
+
               <div style={{ fontSize: "0.85rem", fontWeight: "bold" }}>
-                {item?.month || "-"}
+                {item?.label || item?.day || item?.month || item?.year || "-"}
               </div>
+
               <div style={{ fontSize: "0.75rem", color: "#64748b" }}>
                 {orders} {t("orders").toLowerCase()}
               </div>
@@ -168,6 +177,7 @@ function PieChart({ data = [], isMobile }) {
             const value = Number(item?.value || 0);
             const dash = (value / total) * circumference;
             const gap = circumference - dash;
+
             const circle = (
               <circle
                 key={item?.name || index}
@@ -181,10 +191,12 @@ function PieChart({ data = [], isMobile }) {
                 strokeDashoffset={-cumulative}
               />
             );
+
             cumulative += dash;
             return circle;
           })}
         </g>
+
         <text
           x={center}
           y={center - 4}
@@ -215,6 +227,37 @@ export default function DashboardPage() {
   const [status, setStatus] = useState("Loading dashboard...");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
+
+  const [viewMode, setViewMode] = useState("overall");
+  const [selectedYear, setSelectedYear] = useState(String(currentYear));
+  const [selectedMonth, setSelectedMonth] = useState(String(currentMonth));
+
+  const yearOptions = useMemo(() => {
+    const years = [];
+    for (let y = currentYear; y >= currentYear - 5; y--) {
+      years.push(String(y));
+    }
+    return years;
+  }, [currentYear]);
+
+  const monthOptions = [
+    { value: "1", label: "January" },
+    { value: "2", label: "February" },
+    { value: "3", label: "March" },
+    { value: "4", label: "April" },
+    { value: "5", label: "May" },
+    { value: "6", label: "June" },
+    { value: "7", label: "July" },
+    { value: "8", label: "August" },
+    { value: "9", label: "September" },
+    { value: "10", label: "October" },
+    { value: "11", label: "November" },
+    { value: "12", label: "December" },
+  ];
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
     window.addEventListener("resize", handleResize);
@@ -224,7 +267,21 @@ export default function DashboardPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await fetch(`${API}/dashboard/summary`);
+        setStatus("Loading dashboard...");
+
+        const params = new URLSearchParams();
+        params.set("view", viewMode);
+
+        if (viewMode === "monthly") {
+          params.set("year", selectedYear);
+          params.set("month", selectedMonth);
+        }
+
+        if (viewMode === "yearly") {
+          params.set("year", selectedYear);
+        }
+
+        const res = await fetch(`${API}/dashboard/summary?${params.toString()}`);
         const text = await res.text();
 
         let data;
@@ -248,7 +305,7 @@ export default function DashboardPage() {
     };
 
     load();
-  }, []);
+  }, [viewMode, selectedYear, selectedMonth]);
 
   const totalOrders = Number(summary?.totalOrders || 0);
   const totalRevenue = Number(summary?.totalRevenue || 0);
@@ -259,7 +316,12 @@ export default function DashboardPage() {
   const avgRevenuePerHour = Number(summary?.avgRevenuePerHour || 0);
   const totalFuelCost = Number(summary?.totalFuelCost ?? summary?.totalGasFee ?? 0);
 
-  const monthlyStats = Array.isArray(summary?.monthlyStats) ? summary.monthlyStats : [];
+  const chartStats = Array.isArray(summary?.chartStats)
+    ? summary.chartStats
+    : Array.isArray(summary?.monthlyStats)
+    ? summary.monthlyStats
+    : [];
+
   const costBreakdown = (Array.isArray(summary?.costBreakdown) ? summary.costBreakdown : []).map((item) => ({
     ...item,
     name:
@@ -271,6 +333,7 @@ export default function DashboardPage() {
         ? t("profit")
         : item.name,
   }));
+
   const topAreas = Array.isArray(summary?.topAreas) ? summary.topAreas : [];
   const recentOrders = Array.isArray(summary?.recentOrders) ? summary.recentOrders : [];
 
@@ -295,6 +358,94 @@ export default function DashboardPage() {
         <h1 style={{ marginTop: 0, fontSize: isMobile ? "1.4rem" : "2rem" }}>
           {t("dashboard")}
         </h1>
+
+        <div
+          style={{
+            background: "white",
+            borderRadius: "12px",
+            padding: isMobile ? "14px" : "16px",
+            border: "1px solid #e2e8f0",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.08)",
+            marginBottom: "20px",
+            display: "grid",
+            gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fit, minmax(180px, 1fr))",
+            gap: "12px",
+          }}
+        >
+          <div>
+            <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+              {t("viewMode") || "View Mode"}
+            </label>
+            <select
+              value={viewMode}
+              onChange={(e) => setViewMode(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                boxSizing: "border-box",
+                fontSize: "16px",
+              }}
+            >
+              <option value="overall">{t("overall") || "Overall"}</option>
+              <option value="monthly">{t("monthly") || "Monthly"}</option>
+              <option value="yearly">{t("yearly") || "Yearly"}</option>
+            </select>
+          </div>
+
+          {(viewMode === "monthly" || viewMode === "yearly") && (
+            <div>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+                {t("year") || "Year"}
+              </label>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  boxSizing: "border-box",
+                  fontSize: "16px",
+                }}
+              >
+                {yearOptions.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {viewMode === "monthly" && (
+            <div>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "bold" }}>
+                {t("month") || "Month"}
+              </label>
+              <select
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  boxSizing: "border-box",
+                  fontSize: "16px",
+                }}
+              >
+                {monthOptions.map((month) => (
+                  <option key={month.value} value={month.value}>
+                    {month.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
 
         {status && <p>{status}</p>}
 
@@ -328,7 +479,7 @@ export default function DashboardPage() {
                 marginBottom: "24px",
               }}
             >
-              <SimpleBarChart data={monthlyStats} t={t} isMobile={isMobile} />
+              <SimpleBarChart data={chartStats} t={t} isMobile={isMobile} viewMode={viewMode} />
 
               <div
                 style={{
